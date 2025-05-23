@@ -3,67 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adaptive Macro Tracker - Enhanced</title>
+    <title>Adaptive Macro Tracker - Step 5 Improvements</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; 
-            color: #1f2937; 
-            display: flex;
-            justify-content: center;
-            align-items: flex-start; 
-            min-height: 100vh;
-            padding: 1rem; 
+            font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #1f2937;
+            display: flex; justify-content: center; align-items: flex-start; 
+            min-height: 100vh; padding: 1rem; 
         }
         .container {
-            background-color: white;
-            padding: 1.5rem; 
-            border-radius: 0.75rem; 
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); 
-            width: 100%;
-            max-width: 600px; 
-            margin-top: 2rem; 
-            margin-bottom: 2rem; 
+            background-color: white; padding: 1.5rem; border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            width: 100%; max-width: 600px; margin-top: 2rem; margin-bottom: 2rem; 
         }
         .input-group { margin-bottom: 1rem; position: relative; } 
         .input-label { display: block; margin-bottom: 0.25rem; font-weight: 500; color: #374151; } 
-        .input-field, .select-field {
+        .input-field, .select-field, .textarea-field { 
             width: 100%; padding: 0.6rem 0.8rem; border: 1px solid #d1d5db; 
             border-radius: 0.375rem; transition: border-color 0.2s, box-shadow 0.2s; 
             appearance: none; -moz-appearance: none; -webkit-appearance: none;
-            background-position: right 0.5rem center; background-repeat: no-repeat;
-            background-size: 1.5em 1.5em;
         }
         .select-field {
-             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd' /%3E%3C/svg%3E");
+            background-position: right 0.5rem center; background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd' /%3E%3C/svg%3E");
         }
+        .textarea-field { min-height: 80px; resize: vertical; appearance: auto; -moz-appearance: auto; -webkit-appearance: auto; } 
+
         input[type=number]::-webkit-inner-spin-button,
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
-        .input-field:focus, .select-field:focus {
+        .input-field:focus, .select-field:focus, .textarea-field:focus {
             outline: none; border-color: #6366f1; 
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); 
         }
-        .input-field.invalid { border-color: #ef4444; }
-        .input-field.invalid:focus { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2); }
+        .input-field.invalid, .textarea-field.invalid { border-color: #ef4444; }
+        .input-field.invalid:focus, .textarea-field.invalid:focus { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2); }
         .button {
             width: 100%; padding: 0.75rem 1rem; background-color: #4f46e5; 
             color: white; font-weight: 600; border-radius: 0.375rem;
             transition: background-color 0.2s, opacity 0.2s;
             border: none; cursor: pointer; margin-top: 1rem; 
         }
-        .button:hover { background-color: #4338ca; }
-        .button:disabled { background-color: #a5b4fc; cursor: not-allowed; } 
+        .button:hover:not(:disabled) { background-color: #4338ca; } 
+        .button:disabled { background-color: #a5b4fc; opacity: 0.7; cursor: not-allowed; } 
+        .button-sm { padding: 0.5rem 0.75rem; font-size: 0.875rem; margin-top: 0.5rem; width: auto; } 
         .button-secondary { background-color: #6b7280; } 
-        .button-secondary:hover { background-color: #4b5563; }
-        .button-secondary:disabled { background-color: #d1d5db; color: #6b7280; }
+        .button-secondary:hover:not(:disabled) { background-color: #4b5563; }
+        .button-secondary:disabled { background-color: #d1d5db; color: #6b7280; opacity: 0.7; }
+        .button-success { background-color: #10b981; } 
+        .button-success:hover:not(:disabled) { background-color: #059669; }
         .button-danger { background-color: #ef4444; } 
-        .button-danger:hover { background-color: #dc2626; }
+        .button-danger:hover:not(:disabled) { background-color: #dc2626; }
         .button-warning { background-color: #f59e0b; } 
-        .button-warning:hover { background-color: #d97706; }
+        .button-warning:hover:not(:disabled) { background-color: #d97706; }
         .info-box {
             background-color: #eef2ff; color: #3730a3; padding: 1rem;
             border-radius: 0.375rem; margin-top: 1.5rem; border: 1px solid #c7d2fe; 
@@ -71,10 +66,10 @@
         .info-box h3 { font-weight: 600; margin-bottom: 0.5rem; }
         .info-box p { margin-bottom: 0.25rem; }
         .error-message { display: block; color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem; min-height: 1.25rem; } 
-        .success-message { color: #10b981; font-size: 0.875rem; margin-top: 0.5rem; text-align: center;} 
+        .warning-message { color: #f59e0b; background-color: #fffbeb; border: 1px solid #fde68a; padding: 0.75rem; border-radius: 0.375rem; font-size: 0.875rem; margin-top: 0.5rem; text-align: center;}
         #setupScreen, #dashboardScreen { display: none; } 
         hr { margin-top: 1.5rem; margin-bottom: 1.5rem; border-color: #e5e7eb; } 
-        #dataSummaryContainer, #weightChartContainer { /* Apply to both collapsible sections */
+        #dataSummaryContainer, #weightChartContainer { 
             background-color: #f9fafb; border: 1px solid #e5e7eb; 
             padding: 1rem; border-radius: 0.5rem; margin-top: 1.5rem;
         }
@@ -92,7 +87,30 @@
         }
         .log-entry { padding: 0.5rem; border-bottom: 1px dashed #d1d5db; }
         .log-entry:last-child { border-bottom: none; }
-        #weightChartCanvas { max-height: 400px; } /* Limit chart height */
+        .log-entry-notes { font-style: italic; color: #6b7280; margin-top: 0.25rem; font-size: 0.8rem; } 
+        #weightChartCanvas { max-height: 400px; } 
+        #loggedDaySummary {
+            margin-top: 0.75rem; padding: 0.75rem;
+            background-color: #f0fdf4; border: 1px solid #bbf7d0; 
+            border-radius: 0.375rem; font-size: 0.875rem;
+        }
+        #loggedDaySummary p { margin-bottom: 0.1rem; }
+        .hidden-file-input { display: none; }
+        #toastContainer {
+            position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+            display: flex; flex-direction: column; gap: 0.5rem;
+        }
+        .toast {
+            padding: 0.75rem 1.25rem; border-radius: 0.375rem; color: white;
+            font-size: 0.875rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            opacity: 0; transform: translateY(20px); transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.success { background-color: #10b981; } .toast.error { background-color: #ef4444; }
+        .toast.warning { background-color: #f59e0b; }
+        .chart-options { margin-top: 0.5rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .chart-options label { font-size: 0.875rem; color: #374151; }
+        .empty-state-message { text-align: center; color: #6b7280; padding: 1rem; font-style: italic; }
     </style>
 </head>
 <body>
@@ -100,8 +118,8 @@
         <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Adaptive Macro Tracker</h1>
 
         <div id="setupScreen">
-            <h2 class="text-xl font-semibold mb-4">Initial Setup</h2>
-            <p class="text-sm text-gray-600 mb-4">Please provide some basic information to get started.</p>
+            <h2 id="setupScreenTitle" class="text-xl font-semibold mb-4">Initial Setup</h2>
+            <p id="setupScreenSubtitle" class="text-sm text-gray-600 mb-4">Please provide basic info.</p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="input-group"><label for="currentWeight" class="input-label">Current Weight (kg)</label><input type="number" id="currentWeight" class="input-field" placeholder="e.g., 70" step="0.1"><span id="currentWeightError" class="error-message"></span></div>
                 <div class="input-group"><label for="height" class="input-label">Height (cm)</label><input type="number" id="height" class="input-field" placeholder="e.g., 175" step="0.1"><span id="heightError" class="error-message"></span></div>
@@ -114,16 +132,34 @@
             <div class="input-group"><label for="weeklyGoal" class="input-label">Weekly Weight Goal</label><select id="weeklyGoal" class="select-field"><option value="-1">-1 kg/wk</option><option value="-0.75">-0.75 kg/wk</option><option value="-0.5">-0.5 kg/wk</option><option value="-0.25">-0.25 kg/wk</option><option value="0" selected>Maintain</option><option value="0.125">+0.125 kg/wk</option><option value="0.25">+0.25 kg/wk</option><option value="0.5">+0.5 kg/wk</option></select><span id="weeklyGoalError" class="error-message"></span></div>
             <button id="saveSetupBtn" class="button">Save Setup & Start Tracking</button>
             <p id="setupOverallError" class="error-message text-center font-semibold"></p>
+            <p id="setupBmrWarning" class="warning-message" style="display: none;"></p>
+            <button id="cancelEditProfileBtn" class="button button-secondary mt-2" style="display: none;">Cancel Edit</button>
         </div>
 
         <div id="dashboardScreen">
             <div class="text-center mb-4"><p class="text-gray-600">Today: <span id="currentDateDisplay" class="font-medium"></span></p></div>
             <div class="info-box mb-6">
-                <h3 class="text-lg">Current Targets</h3>
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-lg m-0 p-0">Current Targets</h3>
+                    <button id="editProfileBtn" class="button button-sm button-secondary">Edit Profile</button> </div>
                 <p>Calories: <strong id="targetCaloriesDisplay">N/A</strong> kcal</p><p>Protein: <strong id="targetProteinDisplay">N/A</strong> g</p>
                 <p>Carbs: <strong id="targetCarbsDisplay">N/A</strong> g</p><p>Fat: <strong id="targetFatDisplay">N/A</strong> g</p>
                 <p class="mt-2">Estimated TDEE: <strong id="tdeeDisplay">N/A</strong> kcal (Last Check-in: <span id="lastCheckinTDEEDate">N/A</span>)</p>
+                <p id="dashboardBmrWarning" class="warning-message mt-2" style="display: none;"></p>
+                <div class="mt-3 pt-3 border-t border-indigo-200">
+                    <label for="dashboardWeeklyGoal" class="input-label text-sm">Update Weekly Goal:</label>
+                    <div class="flex items-center gap-2">
+                        <select id="dashboardWeeklyGoal" class="select-field flex-grow">
+                            <option value="-1">-1 kg/wk</option><option value="-0.75">-0.75 kg/wk</option>
+                            <option value="-0.5">-0.5 kg/wk</option><option value="-0.25">-0.25 kg/wk</option>
+                            <option value="0">Maintain</option><option value="0.125">+0.125 kg/wk</option>
+                            <option value="0.25">+0.25 kg/wk</option><option value="0.5">+0.5 kg/wk</option>
+                        </select>
+                        <button id="updateWeeklyGoalBtn" class="button button-sm">Update Goal</button>
+                    </div>
+                </div>
             </div>
+
             <h2 class="text-xl font-semibold mb-3">Log Data</h2>
             <div class="input-group"><label for="logDate" class="input-label">Date to Log/View</label><input type="date" id="logDate" class="input-field"></div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="input-group"><label for="logWeight" class="input-label">Weight (kg)</label><input type="number" id="logWeight" class="input-field" placeholder="Your weight" step="0.1"><span id="logWeightError" class="error-message"></span></div></div>
@@ -132,41 +168,63 @@
                 <div class="input-group"><label for="logCarbs" class="input-label">Carbs (g)</label><input type="number" id="logCarbs" class="input-field" placeholder="e.g., 200" step="1"><span id="logCarbsError" class="error-message"></span></div>
                 <div class="input-group"><label for="logFat" class="input-label">Fat (g)</label><input type="number" id="logFat" class="input-field" placeholder="e.g., 60" step="1"><span id="logFatError" class="error-message"></span></div>
             </div>
+            <div class="input-group mt-4">
+                <label for="logNotes" class="input-label">Notes (optional)</label>
+                <textarea id="logNotes" class="textarea-field" placeholder="e.g., Felt tired, good workout..."></textarea>
+            </div>
             <button id="logDataBtn" class="button">Log/Update Data for <span id="logDateDisplay">Selected Date</span></button>
             <button id="clearLogDayBtn" class="button button-warning mt-2">Clear Log for <span id="clearLogDateDisplay">Selected Date</span></button>
-            <p id="logOverallError" class="error-message text-center font-semibold"></p><p id="logSuccess" class="success-message"></p>
+            <p id="logOverallError" class="error-message text-center font-semibold"></p>
+            <div id="loggedDaySummary" style="display: none;"></div>
+            
             <hr>
             <h2 class="text-xl font-semibold mb-3">Weekly Check-in</h2>
             <p class="text-sm text-gray-600 mb-2">Perform a check-in to update TDEE & targets. Recommended weekly/bi-weekly.</p>
             <p class="text-sm text-gray-600 mb-2">Days with full logs in last 4 weeks: <strong id="daysLoggedForCheckin">0</strong> (Need at least <span id="minLogsRequiredDisplay"></span>)</p>
             <button id="checkinBtn" class="button button-secondary" disabled>Perform Weekly Check-in</button><p id="checkinMessage" class="mt-2 text-sm text-center"></p>
             <hr>
-            <button id="toggleDataSummaryBtn" class="button button-secondary mt-2">View My Data Summary</button>
-            <div id="dataSummaryContainer" style="display: none;">
-                <div><h3>User Profile</h3><div id="profileSummary"></div></div>
-                <div class="mt-4"><h3>Current Targets</h3><div id="targetsSummary"></div></div>
-                <div class="mt-4"><h3>Daily Logs <span id="logCount">(0 entries)</span></h3><div id="logsSummaryList"></div></div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4"> 
+                <button id="toggleDataSummaryBtn" class="button button-secondary">My Data Summary</button>
+                <button id="toggleWeightChartBtn" class="button button-secondary">Weight Trend Chart</button>
             </div>
-            <button id="toggleWeightChartBtn" class="button button-secondary mt-2">View Weight Trend Chart</button>
-            <div id="weightChartContainer" style="display: none;">
-                <h3>Weekly Average Weight Trend</h3>
+            <div id="chartOptionsContainer" class="chart-options" style="display: none;">
+                <input type="checkbox" id="showDailyWeightsToggle" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                <label for="showDailyWeightsToggle">Show Daily Weight Points</label>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 mt-2"> 
+                <button id="exportDataBtn" class="button button-success">Export My Data</button>
+                <button id="importDataBtn" class="button button-success">Import My Data</button>
+            </div>
+            <input type="file" id="importFileInput" class="hidden-file-input" accept=".json">
+            
+            <div id="dataSummaryContainer" style="display: none;"> <div><h3>User Profile</h3><div id="profileSummary"></div> <p id="profileEmptyState" class="empty-state-message" style="display:none;">Profile not set up yet.</p></div>
+                <div class="mt-4"><h3>Current Targets</h3><div id="targetsSummary"></div> <p id="targetsEmptyState" class="empty-state-message" style="display:none;">No targets calculated.</p></div>
+                <div class="mt-4"><h3>Daily Logs <span id="logCount">(0 entries)</span></h3><div id="logsSummaryList"></div> <p id="logsEmptyState" class="empty-state-message" style="display:none;">No logs recorded yet. Start logging your progress!</p></div>
+            </div>
+            <div id="weightChartContainer" style="display: none;"> <h3>Weekly Average Weight Trend</h3>
                 <canvas id="weightChartCanvas"></canvas>
-                <p id="chartMessage" class="text-sm text-center mt-2"></p>
-            </div>
+                <p id="chartMessage" class="empty-state-message mt-2"></p> </div>
             <button id="viewLogsBtn" class="button button-secondary mt-2">View Raw Logs (Console)</button>
             <button id="resetDataBtn" class="button button-danger mt-2">Reset All Data</button>
         </div>
     </div>
-
+    <div id="toastContainer"></div>
     <script>
         // --- Constants ---
         const CALORIES_PER_G_PROTEIN = 4; const CALORIES_PER_G_CARB = 4; const CALORIES_PER_G_FAT = 9;
-        const CALORIES_PER_KG_FAT_TISSUE = 7700; const TDEE_SMOOTHING_FACTOR = 0.3; 
+        const CALORIES_PER_KG_FAT_TISSUE = 7700; 
+        const DEFAULT_TDEE_SMOOTHING_FACTOR = 0.3; // --- STEP 5 --- Default smoothing
+        const INITIAL_TDEE_SMOOTHING_FACTOR = 0.5; // --- STEP 5 --- More aggressive for first few check-ins
         const CHECKIN_ANALYSIS_DAYS_WINDOW = 28; const MIN_LOGS_FOR_CHECKIN = 10; 
-        const WEIGHT_TREND_DAYS = 3; 
+        const WEIGHT_TREND_DAYS = 7; 
+        const TOAST_DURATION = 3000; 
+        const MIN_LOG_DISTRIBUTION_SPAN_DAYS = 14; // --- STEP 5 --- Min spread of logs for reliable check-in
 
         // --- DOM Elements ---
         const setupScreen = document.getElementById('setupScreen');
+        const setupScreenTitle = document.getElementById('setupScreenTitle'); 
+        const setupScreenSubtitle = document.getElementById('setupScreenSubtitle'); 
         const currentWeightInput = document.getElementById('currentWeight');
         const heightInput = document.getElementById('height');
         const ageInput = document.getElementById('age');
@@ -174,9 +232,11 @@
         const activityLevelSelect = document.getElementById('activityLevel');
         const proteinGoalGramsPerKgInput = document.getElementById('proteinGoalGramsPerKg');
         const fatGoalPercentageInput = document.getElementById('fatGoalPercentage');
-        const weeklyGoalSelect = document.getElementById('weeklyGoal');
+        const weeklyGoalSelect = document.getElementById('weeklyGoal'); 
         const saveSetupBtn = document.getElementById('saveSetupBtn');
+        const cancelEditProfileBtn = document.getElementById('cancelEditProfileBtn'); 
         const setupOverallError = document.getElementById('setupOverallError');
+        const setupBmrWarning = document.getElementById('setupBmrWarning'); 
         const dashboardScreen = document.getElementById('dashboardScreen');
         const currentDateDisplay = document.getElementById('currentDateDisplay');
         const targetCaloriesDisplay = document.getElementById('targetCaloriesDisplay');
@@ -185,17 +245,19 @@
         const targetFatDisplay = document.getElementById('targetFatDisplay');
         const tdeeDisplay = document.getElementById('tdeeDisplay');
         const lastCheckinTDEEDateDisplay = document.getElementById('lastCheckinTDEEDate');
+        const dashboardBmrWarning = document.getElementById('dashboardBmrWarning'); 
         const logDateInput = document.getElementById('logDate');
         const logWeightInput = document.getElementById('logWeight');
         const logProteinInput = document.getElementById('logProtein');
         const logCarbsInput = document.getElementById('logCarbs');
         const logFatInput = document.getElementById('logFat');
+        const logNotesInput = document.getElementById('logNotes'); 
         const logDataBtn = document.getElementById('logDataBtn');
         const clearLogDayBtn = document.getElementById('clearLogDayBtn');
         const logDateDisplay = document.getElementById('logDateDisplay');
         const clearLogDateDisplay = document.getElementById('clearLogDateDisplay');
         const logOverallError = document.getElementById('logOverallError');
-        const logSuccess = document.getElementById('logSuccess');
+        const loggedDaySummaryDiv = document.getElementById('loggedDaySummary'); 
         const checkinBtn = document.getElementById('checkinBtn');
         const daysLoggedForCheckinDisplay = document.getElementById('daysLoggedForCheckin');
         const minLogsRequiredDisplay = document.getElementById('minLogsRequiredDisplay');
@@ -208,20 +270,50 @@
         const targetsSummaryDiv = document.getElementById('targetsSummary');
         const logsSummaryListDiv = document.getElementById('logsSummaryList');
         const logCountSpan = document.getElementById('logCount');
-        // NEW DOM Elements for Chart
+        const profileEmptyState = document.getElementById('profileEmptyState'); 
+        const targetsEmptyState = document.getElementById('targetsEmptyState'); 
+        const logsEmptyState = document.getElementById('logsEmptyState');       
         const toggleWeightChartBtn = document.getElementById('toggleWeightChartBtn');
         const weightChartContainer = document.getElementById('weightChartContainer');
-        const weightChartCanvas = document.getElementById('weightChartCanvas').getContext('2d'); // Get 2D context
+        const chartOptionsContainer = document.getElementById('chartOptionsContainer'); 
+        const showDailyWeightsToggle = document.getElementById('showDailyWeightsToggle'); 
+        const weightChartCanvas = document.getElementById('weightChartCanvas').getContext('2d'); 
         const chartMessage = document.getElementById('chartMessage');
-        let weightChartInstance = null; // To store the Chart.js instance
+        let weightChartInstance = null; 
+        const editProfileBtn = document.getElementById('editProfileBtn');
+        const exportDataBtn = document.getElementById('exportDataBtn');
+        const importDataBtn = document.getElementById('importDataBtn');
+        const importFileInput = document.getElementById('importFileInput');
+        const toastContainer = document.getElementById('toastContainer'); 
+        const dashboardWeeklyGoalSelect = document.getElementById('dashboardWeeklyGoal'); 
+        const updateWeeklyGoalBtn = document.getElementById('updateWeeklyGoalBtn'); 
 
 
         // --- App State & localStorage Keys ---
-        const PROFILE_KEY = 'adaptiveMacroTracker_profile_v4'; 
-        const LOGS_KEY = 'adaptiveMacroTracker_logs_v4';
-        const TARGETS_KEY = 'adaptiveMacroTracker_targets_v4';
+        const PROFILE_KEY = 'adaptiveMacroTracker_profile_v6'; // Keep v6 for now, data structure of profile/logs/targets hasn't changed fundamentally
+        const LOGS_KEY = 'adaptiveMacroTracker_logs_v6';     
+        const TARGETS_KEY = 'adaptiveMacroTracker_targets_v6';
+        const APP_SETTINGS_KEY = 'adaptiveMacroTracker_appSettings_v1'; // --- STEP 5 --- New key for app settings
 
-        let userProfile = {}; let dailyLogs = []; let currentTargets = {}; 
+        let userProfile = {}; 
+        let dailyLogs = []; 
+        let currentTargets = {}; 
+        let appSettings = { checkInsPerformed: 0 }; // --- STEP 5 --- Track number of check-ins
+        let isEditingProfile = false; 
+
+        // --- Toast Notification Function ---
+        function showToast(message, type = 'success', duration = TOAST_DURATION) { /* ... (same as before) ... */ 
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`; 
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+            toast.offsetHeight; 
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => { toastContainer.removeChild(toast); }, 300); 
+            }, duration);
+        }
 
         // --- Utility Functions ---
         function getTodayDateString() { return new Date().toISOString().split('T')[0]; }
@@ -230,8 +322,9 @@
             const date = new Date(dateString + 'T00:00:00'); 
             return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
         }
-        function NdayAgoDateString(daysAgo) {
-            const date = new Date(); date.setDate(date.getDate() - daysAgo);
+        function NdayAgoDateString(daysAgo, fromDate = new Date()) { 
+            const date = new Date(fromDate); 
+            date.setDate(date.getDate() - daysAgo);
             return date.toISOString().split('T')[0];
         }
         function validateField(inputEl, fieldName, rules = {}) { /* ... (same as before) ... */ 
@@ -243,61 +336,90 @@
                 errorEl.textContent = `${fieldName} is required.`; inputEl.classList.add('invalid'); return false;
             }
             const num = parseFloat(value);
-            if (isNaN(num)) {
+            if (isNaN(num) && inputEl.type === 'number' && String(value).trim() !== '') { 
                 errorEl.textContent = `${fieldName} must be a number.`; inputEl.classList.add('invalid'); return false;
-            }
-            if (!rules.allowNegative && num < 0) {
-                errorEl.textContent = `${fieldName} cannot be negative.`; inputEl.classList.add('invalid'); return false;
-            }
-            if (!rules.allowZero && num === 0 && !rules.isOptional) {
-                errorEl.textContent = `${fieldName} cannot be zero.`; inputEl.classList.add('invalid'); return false;
-            }
-            if (rules.min !== undefined && num < rules.min) {
-                errorEl.textContent = `${fieldName} must be at least ${rules.min}.`; inputEl.classList.add('invalid'); return false;
-            }
-            if (rules.max !== undefined && num > rules.max) {
-                errorEl.textContent = `${fieldName} must be no more than ${rules.max}.`; inputEl.classList.add('invalid'); return false;
+            } else if (inputEl.type !== 'number' && isNaN(num) && String(value).trim() !== '') {
+            } else if (inputEl.type === 'number') { 
+                if (!rules.allowNegative && num < 0) {
+                    errorEl.textContent = `${fieldName} cannot be negative.`; inputEl.classList.add('invalid'); return false;
+                }
+                if (!rules.allowZero && num === 0 && !rules.isOptional) {
+                    errorEl.textContent = `${fieldName} cannot be zero.`; inputEl.classList.add('invalid'); return false;
+                }
+                if (rules.min !== undefined && num < rules.min) {
+                    errorEl.textContent = `${fieldName} must be at least ${rules.min}.`; inputEl.classList.add('invalid'); return false;
+                }
+                if (rules.max !== undefined && num > rules.max) {
+                    errorEl.textContent = `${fieldName} must be no more than ${rules.max}.`; inputEl.classList.add('invalid'); return false;
+                }
             }
             return true;
         }
         
         // --- Data Persistence ---
-        function loadData() { /* ... (same as before) ... */ 
+        function loadData() { 
             userProfile = JSON.parse(localStorage.getItem(PROFILE_KEY)) || null;
             dailyLogs = JSON.parse(localStorage.getItem(LOGS_KEY)) || [];
             currentTargets = JSON.parse(localStorage.getItem(TARGETS_KEY)) || {};
+            appSettings = JSON.parse(localStorage.getItem(APP_SETTINGS_KEY)) || { checkInsPerformed: 0 }; // --- STEP 5 --- Load app settings
         }
-        function saveData() { /* ... (same as before) ... */ 
+        function saveData() { 
             localStorage.setItem(PROFILE_KEY, JSON.stringify(userProfile));
             localStorage.setItem(LOGS_KEY, JSON.stringify(dailyLogs));
             localStorage.setItem(TARGETS_KEY, JSON.stringify(currentTargets));
+            localStorage.setItem(APP_SETTINGS_KEY, JSON.stringify(appSettings)); // --- STEP 5 --- Save app settings
         }
 
         // --- Calculation Functions ---
-        function calculateBMR(profile) { /* ... (same as before) ... */ 
-            const w = parseFloat(profile.currentWeight), h = parseFloat(profile.height), a = parseFloat(profile.age);
-            return profile.sex === 'male' ? (10*w)+(6.25*h)-(5*a)+5 : (10*w)+(6.25*h)-(5*a)-161;
+        function calculateBMR(profileOrWeight, height, age, sex) { /* ... (same as before) ... */ 
+            let weightKg, heightCm, ageYears, userSex;
+            if (typeof profileOrWeight === 'object' && profileOrWeight !== null) { 
+                weightKg = parseFloat(profileOrWeight.currentWeight); 
+                heightCm = parseFloat(profileOrWeight.height);
+                ageYears = parseFloat(profileOrWeight.age);
+                userSex = profileOrWeight.sex;
+            } else { 
+                weightKg = parseFloat(profileOrWeight);
+                heightCm = parseFloat(height);
+                ageYears = parseFloat(age);
+                userSex = sex;
+            }
+            if (isNaN(weightKg) || isNaN(heightCm) || isNaN(ageYears) || !userSex) return null; 
+            return userSex === 'male' ? (10*weightKg)+(6.25*heightCm)-(5*ageYears)+5 : (10*weightKg)+(6.25*heightCm)-(5*ageYears)-161;
         }
-        function calculateInitialTDEE(profile) { return calculateBMR(profile) * parseFloat(profile.activityLevel); }
+        function calculateInitialTDEE(profile) { /* ... (same as before) ... */ 
+            const bmr = calculateBMR(profile);
+            if (bmr === null) return null;
+            return bmr * parseFloat(profile.activityLevel); 
+        }
         function calculateTargets(tdee, profile, weightKg) { /* ... (same as before) ... */ 
             const goal = parseFloat(profile.weeklyGoal), adj = goal * (CALORIES_PER_KG_FAT_TISSUE / 7);
-            let cal = tdee + adj;
+            let targetCalories = tdee + adj;
+            const currentBMR = calculateBMR(profile); 
+            if (currentBMR && targetCalories < currentBMR) {
+                console.warn(`Target calories (${targetCalories.toFixed(0)}) are below BMR (${currentBMR.toFixed(0)}).`);
+            }
             const pGramsKg = parseFloat(profile.proteinGoalGramsPerKg);
             let pGrams = pGramsKg * weightKg;
             const fatPerc = parseFloat(profile.fatGoalPercentage) / 100;
-            let fGrams = (cal * fatPerc) / CALORIES_PER_G_FAT;
+            let fGrams = (targetCalories * fatPerc) / CALORIES_PER_G_FAT;
             const minFGrams = 0.66 * weightKg;
             if (fGrams < minFGrams) fGrams = minFGrams;
             let pCal = pGrams * CALORIES_PER_G_PROTEIN, fCal = fGrams * CALORIES_PER_G_FAT;
-            let remCalCarb = cal - pCal - fCal;
+            let remCalCarb = targetCalories - pCal - fCal;
             if (remCalCarb < 0) {
                 const minFCal = minFGrams * CALORIES_PER_G_FAT;
-                if (fCal > minFCal) { fCal = Math.max(minFCal, cal - pCal); fGrams = fCal / CALORIES_PER_G_FAT; }
-                remCalCarb = Math.max(0, cal - pCal - fCal);
+                if (fCal > minFCal) { fCal = Math.max(minFCal, targetCalories - pCal); fGrams = fCal / CALORIES_PER_G_FAT; }
+                remCalCarb = Math.max(0, targetCalories - pCal - fCal);
             }
             const cGrams = remCalCarb / CALORIES_PER_G_CARB;
-            cal = pCal + cGrams * CALORIES_PER_G_CARB + fCal;
-            return { calories: Math.round(cal), protein: Math.round(pGrams), carbs: Math.round(cGrams), fat: Math.round(fGrams), estimatedTDEE: Math.round(tdee), lastTDEECalculationDate: getTodayDateString() };
+            targetCalories = pCal + cGrams * CALORIES_PER_G_CARB + fCal; 
+            return { 
+                calories: Math.round(targetCalories), protein: Math.round(pGrams), 
+                carbs: Math.round(cGrams), fat: Math.round(fGrams), 
+                estimatedTDEE: Math.round(tdee), lastTDEECalculationDate: getTodayDateString(),
+                bmrAtTargetCalculation: currentBMR ? Math.round(currentBMR) : null 
+            };
         }
         function getAverageWeight(logsSubset) { /* ... (same as before) ... */ 
             if (!logsSubset || logsSubset.length === 0) return null;
@@ -310,14 +432,13 @@
             setupScreen.style.display = 'none'; dashboardScreen.style.display = 'none';
             document.getElementById(screenId).style.display = 'block';
         }
-        function updateDashboardUI() { /* ... (same as before, with additions for chart refresh) ... */ 
+        function updateDashboardUI() { /* ... (same as before) ... */ 
             if (!userProfile) { showScreen('setupScreen'); return; }
             showScreen('dashboardScreen');
             currentDateDisplay.textContent = formatDateForDisplay(getTodayDateString());
             if (!logDateInput.value) logDateInput.value = getTodayDateString();
             logDateDisplay.textContent = formatDateForDisplay(logDateInput.value);
             clearLogDateDisplay.textContent = formatDateForDisplay(logDateInput.value);
-
             targetCaloriesDisplay.textContent = currentTargets.calories || 'N/A';
             targetProteinDisplay.textContent = currentTargets.protein || 'N/A';
             targetCarbsDisplay.textContent = currentTargets.carbs || 'N/A';
@@ -325,149 +446,233 @@
             tdeeDisplay.textContent = currentTargets.estimatedTDEE || 'N/A';
             lastCheckinTDEEDateDisplay.textContent = currentTargets.lastTDEECalculationDate ? formatDateForDisplay(currentTargets.lastTDEECalculationDate) : 'Initial';
             minLogsRequiredDisplay.textContent = MIN_LOGS_FOR_CHECKIN;
-
+            if (currentTargets.calories && currentTargets.bmrAtTargetCalculation && currentTargets.calories < currentTargets.bmrAtTargetCalculation) {
+                dashboardBmrWarning.textContent = `Warning: Target calories (${currentTargets.calories} kcal) below BMR (${currentTargets.bmrAtTargetCalculation} kcal).`;
+                dashboardBmrWarning.style.display = 'block';
+            } else {
+                dashboardBmrWarning.style.display = 'none';
+            }
             const analysisStart = NdayAgoDateString(CHECKIN_ANALYSIS_DAYS_WINDOW -1);
             const logsInWin = dailyLogs.filter(l => l.date >= analysisStart && l.weight > 0 && l.calories > 0);
             daysLoggedForCheckinDisplay.textContent = `${logsInWin.length}`;
-            checkinBtn.disabled = logsInWin.length < MIN_LOGS_FOR_CHECKIN;
-            checkinBtn.classList.toggle('button-secondary', checkinBtn.disabled);
-            
+            if (checkinBtn.textContent !== '⏳ Calculating...') {
+                checkinBtn.disabled = logsInWin.length < MIN_LOGS_FOR_CHECKIN;
+                checkinBtn.classList.toggle('button-secondary', checkinBtn.disabled);
+            }
             if (dataSummaryContainer.style.display !== 'none') displayStoredDataSummary();
-            // NEW: Refresh chart if visible
             if (weightChartContainer.style.display !== 'none') {
-                const chartData = calculateWeeklyAverageWeights();
+                const chartData = calculateWeeklyAndDailyWeightsForChart(); 
                 renderWeightChart(chartData);
+            }
+            if (userProfile && userProfile.weeklyGoal) {
+                dashboardWeeklyGoalSelect.value = userProfile.weeklyGoal;
             }
         }
         function prefillLogData(date) { /* ... (same as before) ... */ 
             const log = dailyLogs.find(l => l.date === date);
-            logWeightInput.value = log?.weight || ''; logProteinInput.value = log?.protein || '';
-            logCarbsInput.value = log?.carbs || ''; logFatInput.value = log?.fat || '';
-            [logWeightInput, logProteinInput, logCarbsInput, logFatInput].forEach(el => {
+            logWeightInput.value = log?.weight || ''; 
+            logProteinInput.value = log?.protein || '';
+            logCarbsInput.value = log?.carbs || ''; 
+            logFatInput.value = log?.fat || '';
+            logNotesInput.value = log?.notes || ''; 
+            [logWeightInput, logProteinInput, logCarbsInput, logFatInput, logNotesInput].forEach(el => { 
                 el.classList.remove('invalid');
                 const errEl = document.getElementById(`${el.id}Error`); if(errEl) errEl.textContent = '';
             });
-            logSuccess.textContent = log ? `Prefilled data for ${formatDateForDisplay(date)}.` : '';
+            loggedDaySummaryDiv.style.display = 'none'; 
             logOverallError.textContent = '';
         }
         function displayStoredDataSummary() { /* ... (same as before) ... */ 
-            let profileHTML = '<p>No profile.</p>';
+            let profileHTML = '';
             if (userProfile) {
+                profileSummaryDiv.style.display = 'block'; profileEmptyState.style.display = 'none';
                 profileHTML = `<p><strong>Initial Weight:</strong> ${userProfile.currentWeight||'N/A'} kg</p> <p><strong>Height:</strong> ${userProfile.height||'N/A'} cm</p> <p><strong>Age:</strong> ${userProfile.age||'N/A'}</p> <p><strong>Sex:</strong> ${userProfile.sex||'N/A'}</p> <p><strong>Activity Factor:</strong> ${userProfile.activityLevel||'N/A'}</p> <p><strong>Protein Goal:</strong> ${userProfile.proteinGoalGramsPerKg||'N/A'} g/kg</p> <p><strong>Fat Goal:</strong> ${userProfile.fatGoalPercentage||'N/A'}%</p> <p><strong>Weekly Goal:</strong> ${userProfile.weeklyGoal||'N/A'} kg</p> <p><strong>Setup:</strong> ${formatDateForDisplay(userProfile.setupDate)||'N/A'}</p>`;
+            } else {
+                profileSummaryDiv.style.display = 'none'; profileEmptyState.style.display = 'block';
             }
             profileSummaryDiv.innerHTML = profileHTML;
-            let targetsHTML = '<p>No targets.</p>';
+            let targetsHTML = '';
             if (currentTargets && currentTargets.calories) {
+                targetsSummaryDiv.style.display = 'block'; targetsEmptyState.style.display = 'none';
                 targetsHTML = `<p><strong>Calories:</strong> ${currentTargets.calories} kcal</p> <p><strong>Protein:</strong> ${currentTargets.protein} g</p> <p><strong>Carbs:</strong> ${currentTargets.carbs} g</p> <p><strong>Fat:</strong> ${currentTargets.fat} g</p> <p><strong>Est. TDEE:</strong> ${currentTargets.estimatedTDEE} kcal</p> <p><strong>Last Calc:</strong> ${formatDateForDisplay(currentTargets.lastTDEECalculationDate)}</p>`;
+            } else {
+                targetsSummaryDiv.style.display = 'none'; targetsEmptyState.style.display = 'block';
             }
             targetsSummaryDiv.innerHTML = targetsHTML;
-            let logsHTML = '<li>No logs.</li>';
+            let logsHTML = '';
             const reversedLogs = [...dailyLogs].reverse(); 
             logCountSpan.textContent = `(${dailyLogs.length} entries)`;
             if (reversedLogs.length > 0) {
-                logsHTML = reversedLogs.map(log => `<li class="log-entry"><p><strong>Date: ${formatDateForDisplay(log.date)}</strong></p><p>Weight: ${log.weight !== null ? log.weight + ' kg' : 'N/A'}</p><p>Calories: ${log.calories !== null ? log.calories + ' kcal' : 'N/A'}</p><p>Macros (P/C/F): ${log.protein !== null ? log.protein + 'g' : 'N/A'} / ${log.carbs !== null ? log.carbs + 'g' : 'N/A'} / ${log.fat !== null ? log.fat + 'g' : 'N/A'}</p></li>`).join('');
+                logsSummaryListDiv.style.display = 'block'; logsEmptyState.style.display = 'none';
+                logsHTML = reversedLogs.map(log => `
+                    <li class="log-entry">
+                        <p><strong>Date: ${formatDateForDisplay(log.date)}</strong></p>
+                        <p>Weight: ${log.weight !== null ? log.weight + ' kg' : 'N/A'}</p>
+                        <p>Calories: ${log.calories !== null ? log.calories + ' kcal' : 'N/A'}</p>
+                        <p>Macros (P/C/F): 
+                            ${log.protein !== null ? log.protein + 'g' : 'N/A'} / 
+                            ${log.carbs !== null ? log.carbs + 'g' : 'N/A'} / 
+                            ${log.fat !== null ? log.fat + 'g' : 'N/A'}
+                        </p>
+                        ${log.notes ? `<p class="log-entry-notes"><em>Notes:</em> ${log.notes}</p>` : ''} </li>`).join('');
+            } else {
+                logsSummaryListDiv.style.display = 'none'; logsEmptyState.style.display = 'block';
             }
             logsSummaryListDiv.innerHTML = logsHTML;
         }
+        function displayLoggedDaySummary(loggedEntry, targets) { /* ... (same as before) ... */ 
+            if (!loggedEntry || !targets) { loggedDaySummaryDiv.style.display = 'none'; return; }
+            let summaryHTML = `<strong>Logged for ${formatDateForDisplay(loggedEntry.date)}:</strong>`;
+            summaryHTML += `<p>Calories: ${loggedEntry.calories !== null ? loggedEntry.calories : 'N/A'} / ${targets.calories || 'N/A'} kcal</p>`;
+            summaryHTML += `<p>Protein: ${loggedEntry.protein !== null ? loggedEntry.protein : 'N/A'} / ${targets.protein || 'N/A'} g</p>`;
+            summaryHTML += `<p>Carbs: ${loggedEntry.carbs !== null ? loggedEntry.carbs : 'N/A'} / ${targets.carbs || 'N/A'} g</p>`;
+            summaryHTML += `<p>Fat: ${loggedEntry.fat !== null ? loggedEntry.fat : 'N/A'} / ${targets.fat || 'N/A'} g</p>`;
+            if (loggedEntry.notes) { 
+                summaryHTML += `<p>Notes: ${loggedEntry.notes}</p>`;
+            }
+            loggedDaySummaryDiv.innerHTML = summaryHTML; loggedDaySummaryDiv.style.display = 'block';
+        }
 
-        // --- NEW Charting Functions ---
-        /**
-         * Calculates the start of the ISO week for a given date.
-         * Monday is considered the first day of the week.
-         * @param {Date} date - The input date.
-         * @returns {Date} The date of the Monday of that week.
-         */
-        function getStartOfWeek(date) {
-            const d = new Date(date);
-            const day = d.getDay(); // Sunday - 0, Monday - 1, ..., Saturday - 6
-            const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
+        // --- Charting Functions ---
+        function getStartOfWeek(date) { /* ... (same as before) ... */ 
+            const d = new Date(date); const day = d.getDay(); 
+            const diff = d.getDate() - day + (day === 0 ? -6 : 1); 
             return new Date(d.setDate(diff));
         }
-
-        function calculateWeeklyAverageWeights() {
-            if (dailyLogs.length === 0) return { labels: [], data: [] };
-
-            const weeklyData = {}; // Key: YYYY-MM-DD (start of week), Value: { sum: 0, count: 0 }
-            
+        function calculateWeeklyAndDailyWeightsForChart() { /* ... (same as before) ... */ 
+            const weeklyAvg = { labels: [], data: [] };
+            const dailyRaw = { labels: [], data: [] }; 
+            if (dailyLogs.length === 0) return { weeklyAvg, dailyRaw };
+            const weeklyDataAgg = {}; 
             dailyLogs.forEach(log => {
                 if (log.weight !== null && typeof log.weight === 'number' && log.weight > 0) {
-                    const logDate = new Date(log.date + 'T00:00:00'); // Ensure local date
+                    const logDate = new Date(log.date + 'T00:00:00'); 
                     const startOfWeekDate = getStartOfWeek(logDate);
                     const weekKey = startOfWeekDate.toISOString().split('T')[0];
-
-                    if (!weeklyData[weekKey]) {
-                        weeklyData[weekKey] = { sum: 0, count: 0, weights: [] };
-                    }
-                    weeklyData[weekKey].weights.push(log.weight);
+                    if (!weeklyDataAgg[weekKey]) weeklyDataAgg[weekKey] = { weights: [] };
+                    weeklyDataAgg[weekKey].weights.push(log.weight);
+                    dailyRaw.labels.push(log.date); 
+                    dailyRaw.data.push({x: log.date, y: log.weight});
                 }
             });
-
-            const labels = [];
-            const data = [];
-
-            // Sort week keys chronologically
-            const sortedWeekKeys = Object.keys(weeklyData).sort();
-
+            const sortedWeekKeys = Object.keys(weeklyDataAgg).sort();
             sortedWeekKeys.forEach(weekKey => {
-                const week = weeklyData[weekKey];
+                const week = weeklyDataAgg[weekKey];
                 if (week.weights.length > 0) {
                     const averageWeight = week.weights.reduce((acc, w) => acc + w, 0) / week.weights.length;
-                    labels.push(formatDateForDisplay(weekKey)); // Format for display
-                    data.push(parseFloat(averageWeight.toFixed(2))); // Store as number, rounded
+                    weeklyAvg.labels.push(formatDateForDisplay(weekKey)); 
+                    weeklyAvg.data.push(parseFloat(averageWeight.toFixed(2))); 
                 }
             });
-            return { labels, data };
+            dailyRaw.data.sort((a,b) => new Date(a.x) - new Date(b.x));
+            dailyRaw.labels = dailyRaw.data.map(d => formatDateForDisplay(d.x));
+            return { weeklyAvg, dailyRaw };
         }
 
-        function renderWeightChart(chartData) {
-            chartMessage.textContent = ''; // Clear previous messages
-            if (weightChartInstance) {
-                weightChartInstance.destroy(); // Destroy previous instance to prevent conflicts
-            }
-            if (!chartData || chartData.labels.length < 2) { // Need at least 2 points for a meaningful line
-                chartMessage.textContent = 'Not enough data to display a weight trend chart. Please log more weekly weights.';
+        function renderWeightChart(chartData) { // --- STEP 5 --- Modified to include target weight line
+            chartMessage.textContent = ''; 
+            if (weightChartInstance) weightChartInstance.destroy(); 
+            
+            const { weeklyAvg, dailyRaw } = chartData;
+
+            if (!weeklyAvg || weeklyAvg.labels.length < 1) { 
+                chartMessage.innerHTML = 'Not enough data for a weight trend chart. <br>Log more weekly weights, or try showing daily points if available.'; 
                 return;
             }
 
-            weightChartInstance = new Chart(weightChartCanvas, {
-                type: 'line',
-                data: {
-                    labels: chartData.labels,
-                    datasets: [{
-                        label: 'Average Weekly Weight (kg)',
-                        data: chartData.data,
-                        borderColor: '#4f46e5', // Indigo
-                        backgroundColor: 'rgba(79, 70, 229, 0.1)', // Light indigo fill
-                        tension: 0.1, // Makes the line slightly curved
-                        fill: true,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#4f46e5',
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false, // Allow chart to fill container height better
-                    scales: {
-                        y: {
-                            beginAtZero: false, // Don't necessarily start y-axis at 0
-                            title: { display: true, text: 'Weight (kg)' }
-                        },
-                        x: {
-                            title: { display: true, text: 'Week Starting' }
+            const datasets = [{
+                label: 'Average Weekly Weight (kg)',
+                data: weeklyAvg.data,
+                borderColor: '#4f46e5', backgroundColor: 'rgba(79,70,229,0.1)', 
+                tension: 0.1, fill: true,
+                pointRadius: 4, pointBackgroundColor: '#4f46e5', order: 1 
+            }];
+
+            if (showDailyWeightsToggle.checked && dailyRaw && dailyRaw.data.length > 0) {
+                datasets.push({
+                    label: 'Daily Weight (kg)', data: dailyRaw.data, type: 'scatter', 
+                    backgroundColor: 'rgba(239, 68, 68, 0.6)', borderColor: 'rgba(239, 68, 68, 1)',
+                    pointRadius: 3, showLine: false, order: 0
+                });
+            }
+
+            // --- STEP 5 --- Add Target Weight Line dataset
+            if (userProfile && userProfile.setupDate && userProfile.currentWeight && parseFloat(userProfile.weeklyGoal) !== 0) {
+                const targetWeightData = [];
+                const initialWeight = parseFloat(userProfile.currentWeight);
+                const weeklyChange = parseFloat(userProfile.weeklyGoal);
+                const setupDate = new Date(userProfile.setupDate + 'T00:00:00');
+
+                // Generate target points for each week shown in the weeklyAvg labels
+                weeklyAvg.labels.forEach(weekLabelString => {
+                    // Attempt to parse the weekLabelString back to a date (start of week)
+                    // This is a bit tricky as formatDateForDisplay is locale-dependent.
+                    // A more robust way would be to store the weekKey (YYYY-MM-DD) alongside the formatted label.
+                    // For now, let's find the original weekKey for this label.
+                    let originalWeekKey = null;
+                    const weeklyDataAgg = {};
+                     dailyLogs.forEach(log => {
+                        if (log.weight !== null && typeof log.weight === 'number' && log.weight > 0) {
+                            const logDate = new Date(log.date + 'T00:00:00'); 
+                            const startOfWeekDate = getStartOfWeek(logDate);
+                            const wkKey = startOfWeekDate.toISOString().split('T')[0];
+                            if(formatDateForDisplay(wkKey) === weekLabelString) originalWeekKey = wkKey;
                         }
+                    });
+                    
+                    if (originalWeekKey) {
+                        const weekStartDate = new Date(originalWeekKey + 'T00:00:00');
+                        const weeksPassed = (weekStartDate - setupDate) / (1000 * 60 * 60 * 24 * 7);
+                        const targetWeightForWeek = initialWeight + (weeksPassed * weeklyChange);
+                        targetWeightData.push(parseFloat(targetWeightForWeek.toFixed(2)));
+                    } else {
+                        targetWeightData.push(null); // If can't map label back, push null
+                    }
+                });
+                
+                if (targetWeightData.length > 0) {
+                    datasets.push({
+                        label: 'Target Weight (kg)',
+                        data: targetWeightData,
+                        borderColor: '#10b981', // Green
+                        borderDash: [5, 5], // Dashed line
+                        tension: 0.1,
+                        fill: false,
+                        pointRadius: 0, // No points for target line
+                        order: 2
+                    });
+                }
+            }
+            // --- END STEP 5 ---
+            
+            const config = {
+                type: 'line', 
+                data: { labels: weeklyAvg.labels, datasets: datasets },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: false, title: { display: true, text: 'Weight (kg)' } },
+                        x: { title: { display: true, text: 'Week Starting' } }
                     },
-                    plugins: {
+                    plugins: { 
                         legend: { display: true, position: 'top' },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return `${context.dataset.label}: ${context.parsed.y} kg`;
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    if (context.parsed.y !== null) label += `${context.parsed.y.toFixed(2)} kg`;
+                                    if (context.dataset.type === 'scatter' && context.raw && context.raw.x) {
+                                        label += ` on ${formatDateForDisplay(context.raw.x)}`;
+                                    }
+                                    return label;
                                 }
                             }
-                        }
+                        } 
                     }
                 }
-            });
+            };
+            weightChartInstance = new Chart(weightChartCanvas, config);
         }
 
 
@@ -483,21 +688,54 @@
             logCarbsInput.addEventListener('input', () => validateField(logCarbsInput, 'Carbs', {isOptional:true,allowZero:true}));
             logFatInput.addEventListener('input', () => validateField(logFatInput, 'Fat', {isOptional:true,allowZero:true}));
         }
+        
         saveSetupBtn.addEventListener('click', () => { /* ... (same as before) ... */ 
-            setupOverallError.textContent = ''; let isValid = true;
+            setupOverallError.textContent = ''; setupBmrWarning.style.display = 'none'; 
+            let isValid = true;
             isValid = validateField(currentWeightInput, 'Weight',{allowZero:false,allowNegative:false}) && isValid;
             isValid = validateField(heightInput, 'Height',{allowZero:false,allowNegative:false}) && isValid;
             isValid = validateField(ageInput, 'Age',{allowZero:false,allowNegative:false}) && isValid;
             isValid = validateField(proteinGoalGramsPerKgInput, 'Protein',{min:0.5,max:3}) && isValid;
             isValid = validateField(fatGoalPercentageInput, 'Fat %',{min:20,max:50}) && isValid;
             if (!isValid) { setupOverallError.textContent = 'Correct errors above.'; return; }
-            userProfile = { currentWeight:currentWeightInput.value, height:heightInput.value, age:ageInput.value, sex:sexSelect.value, activityLevel:activityLevelSelect.value, proteinGoalGramsPerKg:proteinGoalGramsPerKgInput.value, fatGoalPercentage:fatGoalPercentageInput.value, weeklyGoal:weeklyGoalSelect.value, setupDate:getTodayDateString() };
-            currentTargets = calculateTargets(calculateInitialTDEE(userProfile), userProfile, parseFloat(userProfile.currentWeight)); 
-            dailyLogs = [{ date:userProfile.setupDate, weight:parseFloat(userProfile.currentWeight),protein:null,carbs:null,fat:null,calories:null }]; // Use full property names
-            saveData(); updateDashboardUI();
+            const newProfileData = { 
+                currentWeight: currentWeightInput.value, height: heightInput.value, age: ageInput.value, 
+                sex: sexSelect.value, activityLevel: activityLevelSelect.value, 
+                proteinGoalGramsPerKg: proteinGoalGramsPerKgInput.value, 
+                fatGoalPercentage: fatGoalPercentageInput.value, weeklyGoal: weeklyGoalSelect.value,
+                setupDate: isEditingProfile && userProfile ? userProfile.setupDate : getTodayDateString() 
+            };
+            userProfile = newProfileData; 
+            let tdeeForTargets; let weightForMacroCalc;
+            if (isEditingProfile) {
+                tdeeForTargets = calculateInitialTDEE(userProfile);
+                const mostRecentLogWithWeight = [...dailyLogs].filter(l => l.weight !== null).pop();
+                weightForMacroCalc = mostRecentLogWithWeight ? mostRecentLogWithWeight.weight : parseFloat(userProfile.currentWeight);
+            } else { 
+                tdeeForTargets = calculateInitialTDEE(userProfile);
+                weightForMacroCalc = parseFloat(userProfile.currentWeight);
+                dailyLogs = [{ date:userProfile.setupDate, weight:parseFloat(userProfile.currentWeight),protein:null,carbs:null,fat:null,calories:null, notes:'' }]; 
+                appSettings.checkInsPerformed = 0; // --- STEP 5 --- Reset check-in count on new setup
+            }
+            if (tdeeForTargets === null) { setupOverallError.textContent = 'Could not calculate BMR/TDEE. Check inputs.'; return; }
+            currentTargets = calculateTargets(tdeeForTargets, userProfile, weightForMacroCalc); 
+            if (currentTargets.calories && currentTargets.bmrAtTargetCalculation && currentTargets.calories < currentTargets.bmrAtTargetCalculation) {
+                setupBmrWarning.textContent = `Warning: Target calories (${currentTargets.calories} kcal) below BMR (${currentTargets.bmrAtTargetCalculation} kcal).`;
+                setupBmrWarning.style.display = 'block';
+            }
+            saveData(); isEditingProfile = false; 
+            cancelEditProfileBtn.style.display = 'none'; 
+            updateDashboardUI(); 
+            setupScreenTitle.textContent = 'Initial Setup';
+            setupScreenSubtitle.textContent = 'Please provide some basic information to get started.';
+            saveSetupBtn.textContent = 'Save Setup & Start Tracking';
+            showToast(isEditingProfile ? 'Profile updated successfully!' : 'Setup complete!'); 
         });
-        logDataBtn.addEventListener('click', () => { /* ... (same as before, ensure full property names for logEntry) ... */ 
-            logOverallError.textContent = ''; logSuccess.textContent = ''; const date = logDateInput.value;
+
+        logDataBtn.addEventListener('click', () => { /* ... (same as before) ... */ 
+            logOverallError.textContent = ''; loggedDaySummaryDiv.style.display = 'none';
+            const date = logDateInput.value;
+            const notes = logNotesInput.value.trim(); 
             let isValid = true;
             if (logWeightInput.value.trim()) isValid=validateField(logWeightInput,'Weight',{isOptional:true,allowZero:true})&&isValid;
             if (logProteinInput.value.trim()) isValid=validateField(logProteinInput,'Protein',{isOptional:true,allowZero:true})&&isValid;
@@ -514,17 +752,21 @@
             if (logProteinInput.value.trim()||logCarbsInput.value.trim()||logFatInput.value.trim()) {
                  cal=(p*CALORIES_PER_G_PROTEIN)+(c*CALORIES_PER_G_CARB)+(f*CALORIES_PER_G_FAT);
             }
-            const entry = { date:date, weight:w, protein:logProteinInput.value.trim()?p:null, carbs:logCarbsInput.value.trim()?c:null, fat:logFatInput.value.trim()?f:null, calories:cal!==null?Math.round(cal):null };
+            const entry = { date:date, weight:w, protein:logProteinInput.value.trim()?p:null, carbs:logCarbsInput.value.trim()?c:null, fat:logFatInput.value.trim()?f:null, calories:cal!==null?Math.round(cal):null, notes: notes }; 
             dailyLogs = dailyLogs.filter(l => l.date !== date); dailyLogs.push(entry);
             dailyLogs.sort((a,b) => new Date(a.date) - new Date(b.date));
-            saveData(); updateDashboardUI(); logSuccess.textContent = `Data for ${formatDateForDisplay(date)} logged!`;
+            saveData(); updateDashboardUI(); 
+            showToast(`Data for ${formatDateForDisplay(date)} logged!`); 
+            displayLoggedDaySummary(entry, currentTargets);
         });
         clearLogDayBtn.addEventListener('click', () => { /* ... (same as before) ... */ 
+            loggedDaySummaryDiv.style.display = 'none'; 
             const date = logDateInput.value; if (!date) { logOverallError.textContent = "Select date."; return; }
             if (confirm(`Clear log for ${formatDateForDisplay(date)}?`)) {
                 dailyLogs = dailyLogs.filter(l => l.date !== date); saveData();
                 prefillLogData(date); updateDashboardUI();
-                logSuccess.textContent = `Log for ${formatDateForDisplay(date)} cleared.`; logOverallError.textContent = '';
+                showToast(`Log for ${formatDateForDisplay(date)} cleared.`, 'warning'); 
+                logOverallError.textContent = '';
             }
         });
         toggleDataSummaryBtn.addEventListener('click', () => { /* ... (same as before) ... */ 
@@ -538,73 +780,199 @@
                 toggleDataSummaryBtn.textContent = 'View My Data Summary';
             }
         });
-        // NEW: Event handler for toggling weight chart
-        toggleWeightChartBtn.addEventListener('click', () => {
+        toggleWeightChartBtn.addEventListener('click', () => { /* ... (same as before) ... */ 
             const isHidden = weightChartContainer.style.display === 'none';
             if (isHidden) {
-                const chartData = calculateWeeklyAverageWeights();
+                const chartData = calculateWeeklyAndDailyWeightsForChart();
                 renderWeightChart(chartData);
                 weightChartContainer.style.display = 'block';
+                chartOptionsContainer.style.display = 'flex'; 
                 toggleWeightChartBtn.textContent = 'Hide Weight Trend Chart';
             } else {
                 weightChartContainer.style.display = 'none';
+                chartOptionsContainer.style.display = 'none'; 
                 toggleWeightChartBtn.textContent = 'View Weight Trend Chart';
-                if (weightChartInstance) { // Optionally destroy chart when hidden to free resources
-                    // weightChartInstance.destroy(); 
-                    // weightChartInstance = null;
-                }
+            }
+        });
+        showDailyWeightsToggle.addEventListener('change', () => { /* ... (same as before) ... */ 
+            if (weightChartContainer.style.display !== 'none') { 
+                const chartData = calculateWeeklyAndDailyWeightsForChart();
+                renderWeightChart(chartData);
             }
         });
 
-        checkinBtn.addEventListener('click', async () => { /* ... (same as before) ... */ 
-            checkinBtn.disabled = true; checkinBtn.textContent = 'Calculating...';
+        checkinBtn.addEventListener('click', async () => { // --- STEP 5 --- Modified for log distribution & first check-in logic
+            checkinBtn.disabled = true; checkinBtn.textContent = '⏳ Calculating...'; 
+            checkinBtn.classList.add('opacity-70'); 
             checkinMessage.textContent = 'Performing check-in...';
-            await new Promise(resolve => setTimeout(resolve, 50)); 
-            const start = NdayAgoDateString(CHECKIN_ANALYSIS_DAYS_WINDOW-1);
-            const logs = dailyLogs.filter(l=>l.date>=start && l.weight>0 && l.calories>0).sort((a,b)=>new Date(a.date)-new Date(b.date));
-            if (logs.length < MIN_LOGS_FOR_CHECKIN) {
-                checkinMessage.textContent = `Need ${MIN_LOGS_FOR_CHECKIN} full log days, found ${logs.length}.`;
-                checkinBtn.disabled = false; checkinBtn.textContent = 'Perform Check-in'; return;
+            dashboardBmrWarning.style.display = 'none'; 
+            await new Promise(resolve => setTimeout(resolve, 100)); 
+            
+            const analysisWindowEndDate = new Date(); 
+            const analysisWindowStartDateString = NdayAgoDateString(CHECKIN_ANALYSIS_DAYS_WINDOW - 1, analysisWindowEndDate);
+            
+            const logsForAnalysis = dailyLogs.filter(l => 
+                l.date >= analysisWindowStartDateString && 
+                l.weight !== null && typeof l.weight === 'number' && l.weight > 0 &&
+                l.calories !== null && typeof l.calories === 'number' && l.calories > 0
+            ).sort((a,b) => new Date(a.date) - new Date(b.date)); 
+
+            const resetCheckinButton = () => {
+                checkinBtn.textContent = 'Perform Weekly Check-in';
+                checkinBtn.classList.remove('opacity-70');
+                updateDashboardUI(); 
+            };
+
+            if (logsForAnalysis.length < MIN_LOGS_FOR_CHECKIN) {
+                checkinMessage.textContent = `Need ${MIN_LOGS_FOR_CHECKIN} full log days in the last ${CHECKIN_ANALYSIS_DAYS_WINDOW} days, found ${logsForAnalysis.length}.`;
+                resetCheckinButton(); return;
             }
-            const trendStart = logs.slice(0,Math.min(WEIGHT_TREND_DAYS,logs.length));
-            const trendEnd = logs.slice(-Math.min(WEIGHT_TREND_DAYS,logs.length));
-            const wStart = getAverageWeight(trendStart), wEnd = getAverageWeight(trendEnd);
-            if (wStart===null || wEnd===null || trendStart.length===0 || trendEnd.length===0) {
-                checkinMessage.textContent = 'Cannot determine weight trend.';
-                checkinBtn.disabled=false; checkinBtn.textContent='Perform Check-in'; return;
+
+            // --- STEP 5 --- Check log distribution
+            const firstLogDateInWindow = new Date(logsForAnalysis[0].date + 'T00:00:00');
+            const lastLogDateInWindow = new Date(logsForAnalysis[logsForAnalysis.length - 1].date + 'T00:00:00');
+            const logSpanDays = (lastLogDateInWindow - firstLogDateInWindow) / (1000 * 60 * 60 * 24);
+
+            if (logsForAnalysis.length >= MIN_LOGS_FOR_CHECKIN && logSpanDays < MIN_LOG_DISTRIBUTION_SPAN_DAYS) {
+                checkinMessage.innerHTML = `Found ${logsForAnalysis.length} logs, but they span only ${logSpanDays.toFixed(0)} days. <br>For a more reliable TDEE update, aim for logs spread over at least ${MIN_LOG_DISTRIBUTION_SPAN_DAYS} days within the analysis window. Proceed with caution or log more data.`;
+                // We can still allow check-in but with a warning. Or return here. For now, let's warn and proceed.
+                // To block: resetCheckinButton(); return; 
+            }
+            // --- END STEP 5 ---
+
+            const firstLogDateInAnalysis = new Date(logsForAnalysis[0].date + 'T00:00:00');
+            const lastLogDateInAnalysis = new Date(logsForAnalysis[logsForAnalysis.length - 1].date + 'T00:00:00');
+            const trendPeriodStart_startDate = firstLogDateInAnalysis.toISOString().split('T')[0];
+            const trendPeriodStart_endDate = NdayAgoDateString(-(WEIGHT_TREND_DAYS - 1), firstLogDateInAnalysis); 
+            const trendPeriodEnd_endDate = lastLogDateInAnalysis.toISOString().split('T')[0];
+            const trendPeriodEnd_startDate = NdayAgoDateString(WEIGHT_TREND_DAYS - 1, lastLogDateInAnalysis); 
+            const startTrendLogs = dailyLogs.filter(l => l.date >= trendPeriodStart_startDate && l.date <= trendPeriodStart_endDate && l.weight !== null);
+            const endTrendLogs = dailyLogs.filter(l => l.date >= trendPeriodEnd_startDate && l.date <= trendPeriodEnd_endDate && l.weight !== null);
+            const wStart = getAverageWeight(startTrendLogs);
+            const wEnd = getAverageWeight(endTrendLogs);
+            if (wStart === null || wEnd === null || startTrendLogs.length < Math.min(WEIGHT_TREND_DAYS, 2) || endTrendLogs.length < Math.min(WEIGHT_TREND_DAYS, 2)) { 
+                checkinMessage.textContent = `Cannot determine reliable weight trend. Need at least ${Math.min(WEIGHT_TREND_DAYS,2)} weight logs in the start/end ${WEIGHT_TREND_DAYS}-day periods of your analysis window.`;
+                resetCheckinButton(); return;
             }
             const wChange = wEnd - wStart;
-            const dFirstTrend = new Date(trendStart[0].date), dLastTrend = new Date(trendEnd[trendEnd.length-1].date);
-            const dTrendPeriod = Math.max(1,(dLastTrend-dFirstTrend)/(1000*60*60*24));
-            if(dTrendPeriod < Math.max(1,WEIGHT_TREND_DAYS-1) && logs.length < (MIN_LOGS_FOR_CHECKIN+WEIGHT_TREND_DAYS-1)) {
-                checkinMessage.textContent = `Trend period too short (${dTrendPeriod.toFixed(0)} days).`;
-                checkinBtn.disabled=false; checkinBtn.textContent='Perform Check-in'; return;
+            const dFirstTrend = new Date(startTrendLogs[0].date + 'T00:00:00'); 
+            const dLastTrend = new Date(endTrendLogs[endTrendLogs.length-1].date + 'T00:00:00');
+            const midFirstTrend = new Date(dFirstTrend.getTime() + (new Date(startTrendLogs[startTrendLogs.length-1].date + 'T00:00:00').getTime() - dFirstTrend.getTime()) / 2);
+            const midLastTrend = new Date(new Date(endTrendLogs[0].date + 'T00:00:00').getTime() + (dLastTrend.getTime() - new Date(endTrendLogs[0].date + 'T00:00:00').getTime()) / 2);
+            const dTrendPeriod = Math.max(1, (midLastTrend - midFirstTrend) / (1000 * 60 * 60 * 24));
+            if(dTrendPeriod < WEIGHT_TREND_DAYS && logsForAnalysis.length < (MIN_LOGS_FOR_CHECKIN + WEIGHT_TREND_DAYS -1)) { 
+                checkinMessage.textContent = `Trend period too short (${dTrendPeriod.toFixed(0)} days) for reliable weight trend. Log more consistently.`;
+                resetCheckinButton(); return;
             }
-            const avgCal = logs.reduce((s,l)=>s+l.calories,0)/logs.length;
-            const dFirstAnalysis=new Date(logs[0].date), dLastAnalysis=new Date(logs[logs.length-1].date);
+            const avgCal = logsForAnalysis.reduce((s,l)=>s+l.calories,0)/logsForAnalysis.length;
+            const dFirstAnalysis=new Date(logsForAnalysis[0].date + 'T00:00:00'), dLastAnalysis=new Date(logsForAnalysis[logsForAnalysis.length-1].date + 'T00:00:00');
             const durAnalysis=Math.max(1,(dLastAnalysis-dFirstAnalysis)/(1000*60*60*24));
             const dailySurDef=(wChange*CALORIES_PER_KG_FAT_TISSUE)/durAnalysis;
             const exp=avgCal-dailySurDef;
             if(isNaN(exp)||!isFinite(exp)){
-                checkinMessage.textContent='Error calculating expenditure.';
-                checkinBtn.disabled=false; checkinBtn.textContent='Perform Check-in'; return;
+                checkinMessage.textContent='Error calculating expenditure. Check logs for anomalies.';
+                resetCheckinButton(); return;
             }
             const prevTDEE=currentTargets.estimatedTDEE||calculateInitialTDEE(userProfile);
-            const newTDEE=(prevTDEE*(1-TDEE_SMOOTHING_FACTOR))+(exp*TDEE_SMOOTHING_FACTOR);
-            currentTargets=calculateTargets(newTDEE,userProfile,wEnd);
-            saveData(); updateDashboardUI(); checkinBtn.textContent='Perform Check-in';
-            checkinMessage.innerHTML = `Check-in complete! <br>Weight Change: ${wChange.toFixed(2)}kg. Avg Cal: ${avgCal.toFixed(0)}. Est. Exp: ${exp.toFixed(0)}.<br>New TDEE: ${currentTargets.estimatedTDEE}kcal. Targets updated.`;
+            
+            // --- STEP 5 --- Adjust smoothing factor for initial check-ins
+            const currentSmoothingFactor = appSettings.checkInsPerformed < 2 ? INITIAL_TDEE_SMOOTHING_FACTOR : DEFAULT_TDEE_SMOOTHING_FACTOR;
+            const newTDEE=(prevTDEE*(1-currentSmoothingFactor))+(exp*currentSmoothingFactor);
+            // --- END STEP 5 ---
+
+            currentTargets=calculateTargets(newTDEE,userProfile,wEnd); 
+            appSettings.checkInsPerformed++; // --- STEP 5 --- Increment check-in counter
+            saveData(); updateDashboardUI(); resetCheckinButton(); 
+            checkinMessage.innerHTML = `Check-in complete! <br>Weight Change: ${wChange.toFixed(2)}kg. Avg Cal: ${avgCal.toFixed(0)}. Est. Exp: ${exp.toFixed(0)}.<br>New TDEE: ${currentTargets.estimatedTDEE}kcal. Targets updated. (Check-in #${appSettings.checkInsPerformed})`;
+            showToast('Check-in complete! Targets updated.', 'success'); 
         });
-        resetDataBtn.addEventListener('click', () => { /* ... (same as before) ... */ 
+        resetDataBtn.addEventListener('click', () => { /* ... (MODIFIED to reset appSettings) ... */ 
             if (confirm("Reset all data?")) {
                 localStorage.clear(); userProfile=null; dailyLogs=[]; currentTargets={};
-                [setupOverallError,logOverallError,logSuccess,checkinMessage].forEach(el=>el.textContent='');
-                logDateInput.value=''; init(); 
+                appSettings = { checkInsPerformed: 0 }; // --- STEP 5 --- Reset app settings
+                [setupOverallError,logOverallError,checkinMessage, setupBmrWarning, dashboardBmrWarning, loggedDaySummaryDiv].forEach(el=>{if(el)el.textContent=''; if(el)el.style.display='none';});
+                logDateInput.value=''; 
+                showToast('All data has been reset.', 'warning'); 
+                init(); 
             }
         });
-        viewLogsBtn.addEventListener('click', () => { /* ... (same as before) ... */ 
-            console.log("Profile:",userProfile,"Logs:",dailyLogs,"Targets:",currentTargets);
+        viewLogsBtn.addEventListener('click', () => { /* ... (MODIFIED to show appSettings) ... */ 
+            console.log("Profile:",userProfile,"Logs:",dailyLogs,"Targets:",currentTargets, "AppSettings:", appSettings);
             alert("Raw data printed to browser console (F12).");
+        });
+        editProfileBtn.addEventListener('click', () => { /* ... (same as before) ... */ 
+            if (!userProfile) { showToast("No profile found. Please complete initial setup first.", "error"); return; } 
+            isEditingProfile = true;
+            currentWeightInput.value = userProfile.currentWeight || ''; heightInput.value = userProfile.height || ''; ageInput.value = userProfile.age || '';
+            sexSelect.value = userProfile.sex || 'male'; activityLevelSelect.value = userProfile.activityLevel || '1.2';
+            proteinGoalGramsPerKgInput.value = userProfile.proteinGoalGramsPerKg || '1.8';
+            fatGoalPercentageInput.value = userProfile.fatGoalPercentage || '25'; weeklyGoalSelect.value = userProfile.weeklyGoal || '0';
+            document.querySelectorAll('#setupScreen .error-message').forEach(el => el.textContent = '');
+            setupBmrWarning.style.display = 'none';
+            setupScreenTitle.textContent = 'Edit Your Profile';
+            setupScreenSubtitle.textContent = 'Update your information below.';
+            saveSetupBtn.textContent = 'Save Profile Changes';
+            cancelEditProfileBtn.style.display = 'block'; showScreen('setupScreen');
+        });
+        cancelEditProfileBtn.addEventListener('click', () => { /* ... (same as before) ... */ 
+            isEditingProfile = false; cancelEditProfileBtn.style.display = 'none';
+            setupScreenTitle.textContent = 'Initial Setup';
+            setupScreenSubtitle.textContent = 'Please provide some basic information to get started.';
+            saveSetupBtn.textContent = 'Save Setup & Start Tracking'; showScreen('dashboardScreen');
+        });
+        exportDataBtn.addEventListener('click', () => { /* ... (MODIFIED to include appSettings) ... */ 
+            if (!userProfile && dailyLogs.length === 0 && Object.keys(currentTargets).length === 0) {
+                showToast('No data to export.', 'warning'); return;
+            }
+            const dataToExport = { userProfile: userProfile, dailyLogs: dailyLogs, currentTargets: currentTargets, appSettings: appSettings, version: 'tracker_v6_data_with_settings' }; // --- STEP 5 ---
+            const dataStr = JSON.stringify(dataToExport, null, 2); 
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const exportFileDefaultName = `macro_tracker_backup_${getTodayDateString()}.json`;
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri); linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click(); 
+            showToast('Data exported successfully!', 'success'); 
+        });
+        importDataBtn.addEventListener('click', () => { importFileInput.click(); });
+        importFileInput.addEventListener('change', (event) => { /* ... (MODIFIED to import appSettings) ... */ 
+            const file = event.target.files[0];
+            if (!file) { showToast('No file selected for import.', 'warning'); return; }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if (importedData && importedData.userProfile && Array.isArray(importedData.dailyLogs) && importedData.currentTargets) {
+                        if (confirm("Importing will overwrite current data. Are you sure?")) {
+                            userProfile = importedData.userProfile; 
+                            dailyLogs = importedData.dailyLogs; 
+                            currentTargets = importedData.currentTargets;
+                            appSettings = importedData.appSettings || { checkInsPerformed: 0 }; // --- STEP 5 --- Import appSettings or default
+                            saveData(); updateDashboardUI(); prefillLogData(logDateInput.value); 
+                            showToast('Data imported successfully!', 'success'); 
+                            if (!userProfile) showScreen('setupScreen');
+                        } else {
+                             showToast('Import cancelled by user.', 'warning'); 
+                        }
+                    } else { throw new Error("Invalid data structure in JSON file."); }
+                } catch (error) {
+                    console.error("Error importing data:", error);
+                    showToast(`Import Error: ${error.message}`, 'error'); 
+                } finally { importFileInput.value = ''; }
+            };
+            reader.readAsText(file);
+        });
+        updateWeeklyGoalBtn.addEventListener('click', () => { /* ... (same as before) ... */ 
+            if (!userProfile || Object.keys(currentTargets).length === 0 || !currentTargets.estimatedTDEE) {
+                showToast('Cannot update goal until TDEE is established (after setup/check-in).', 'warning');
+                return;
+            }
+            const newGoal = dashboardWeeklyGoalSelect.value;
+            userProfile.weeklyGoal = newGoal;
+            const mostRecentLogWithWeight = [...dailyLogs].filter(l => l.weight !== null).pop();
+            const weightForMacroCalc = mostRecentLogWithWeight ? mostRecentLogWithWeight.weight : parseFloat(userProfile.currentWeight);
+            currentTargets = calculateTargets(currentTargets.estimatedTDEE, userProfile, weightForMacroCalc);
+            saveData(); updateDashboardUI(); 
+            showToast('Weekly goal and targets updated!', 'success');
         });
 
         // --- Initialization ---
@@ -620,4 +988,3 @@
     </script>
 </body>
 </html>
-
