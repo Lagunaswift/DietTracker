@@ -6,40 +6,35 @@
     <title>Adaptive Macro Tracker - Enhanced</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* Light gray background */
-            color: #1f2937; /* Dark gray text */
+            background-color: #f3f4f6; 
+            color: #1f2937; 
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Align to top for potentially long content */
+            align-items: flex-start; 
             min-height: 100vh;
-            padding: 1rem; /* Padding around the container */
+            padding: 1rem; 
         }
         .container {
             background-color: white;
-            padding: 1.5rem; /* Inner padding for the main box */
-            border-radius: 0.75rem; /* Rounded corners for the main box */
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Standard shadow */
+            padding: 1.5rem; 
+            border-radius: 0.75rem; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); 
             width: 100%;
-            max-width: 600px; /* Max width of the content area */
-            margin-top: 2rem; /* Margin from the top */
-            margin-bottom: 2rem; /* Margin from the bottom */
+            max-width: 600px; 
+            margin-top: 2rem; 
+            margin-bottom: 2rem; 
         }
-        .input-group { margin-bottom: 1rem; position: relative; } /* Spacing for input groups, relative for error messages */
-        .input-label { display: block; margin-bottom: 0.25rem; font-weight: 500; color: #374151; } /* Styling for labels */
+        .input-group { margin-bottom: 1rem; position: relative; } 
+        .input-label { display: block; margin-bottom: 0.25rem; font-weight: 500; color: #374151; } 
         .input-field, .select-field {
-            width: 100%;
-            padding: 0.6rem 0.8rem; /* Padding inside input fields */
-            border: 1px solid #d1d5db; /* Border for input fields */
-            border-radius: 0.375rem; /* Rounded corners for input fields */
-            transition: border-color 0.2s, box-shadow 0.2s; /* Smooth transition for focus */
-            appearance: none; 
-            -moz-appearance: none; 
-            -webkit-appearance: none;
-            background-position: right 0.5rem center; 
-            background-repeat: no-repeat;
+            width: 100%; padding: 0.6rem 0.8rem; border: 1px solid #d1d5db; 
+            border-radius: 0.375rem; transition: border-color 0.2s, box-shadow 0.2s; 
+            appearance: none; -moz-appearance: none; -webkit-appearance: none;
+            background-position: right 0.5rem center; background-repeat: no-repeat;
             background-size: 1.5em 1.5em;
         }
         .select-field {
@@ -48,57 +43,56 @@
         input[type=number]::-webkit-inner-spin-button,
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
-
         .input-field:focus, .select-field:focus {
-            outline: none;
-            border-color: #6366f1; 
+            outline: none; border-color: #6366f1; 
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); 
         }
-        .input-field.invalid { border-color: #ef4444; /* Red border for invalid input */ }
+        .input-field.invalid { border-color: #ef4444; }
         .input-field.invalid:focus { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2); }
-
-
         .button {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            background-color: #4f46e5; 
-            color: white;
-            font-weight: 600;
-            border-radius: 0.375rem;
+            width: 100%; padding: 0.75rem 1rem; background-color: #4f46e5; 
+            color: white; font-weight: 600; border-radius: 0.375rem;
             transition: background-color 0.2s, opacity 0.2s;
-            border: none;
-            cursor: pointer;
-            margin-top: 1rem; 
+            border: none; cursor: pointer; margin-top: 1rem; 
         }
         .button:hover { background-color: #4338ca; }
-        .button:disabled { background-color: #a5b4fc; cursor: not-allowed; } /* Lighter indigo for disabled */
-
+        .button:disabled { background-color: #a5b4fc; cursor: not-allowed; } 
         .button-secondary { background-color: #6b7280; } 
         .button-secondary:hover { background-color: #4b5563; }
         .button-secondary:disabled { background-color: #d1d5db; color: #6b7280; }
-
-
         .button-danger { background-color: #ef4444; } 
         .button-danger:hover { background-color: #dc2626; }
-        .button-warning { background-color: #f59e0b; } /* Amber for warning/clear */
+        .button-warning { background-color: #f59e0b; } 
         .button-warning:hover { background-color: #d97706; }
-
-
         .info-box {
-            background-color: #eef2ff; 
-            color: #3730a3; 
-            padding: 1rem;
-            border-radius: 0.375rem;
-            margin-top: 1.5rem;
-            border: 1px solid #c7d2fe; 
+            background-color: #eef2ff; color: #3730a3; padding: 1rem;
+            border-radius: 0.375rem; margin-top: 1.5rem; border: 1px solid #c7d2fe; 
         }
         .info-box h3 { font-weight: 600; margin-bottom: 0.5rem; }
         .info-box p { margin-bottom: 0.25rem; }
-        .error-message { display: block; color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem; min-height: 1.25rem; /* Reserve space */ } 
+        .error-message { display: block; color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem; min-height: 1.25rem; } 
         .success-message { color: #10b981; font-size: 0.875rem; margin-top: 0.5rem; text-align: center;} 
-
         #setupScreen, #dashboardScreen { display: none; } 
         hr { margin-top: 1.5rem; margin-bottom: 1.5rem; border-color: #e5e7eb; } 
+        #dataSummaryContainer, #weightChartContainer { /* Apply to both collapsible sections */
+            background-color: #f9fafb; border: 1px solid #e5e7eb; 
+            padding: 1rem; border-radius: 0.5rem; margin-top: 1.5rem;
+        }
+        #dataSummaryContainer h3, #weightChartContainer h3 {
+            font-size: 1.125rem; font-weight: 600; margin-bottom: 0.75rem;
+            color: #374151; border-bottom: 1px solid #d1d5db; padding-bottom: 0.5rem;
+        }
+        #dataSummaryContainer p, #dataSummaryContainer li {
+            font-size: 0.875rem; color: #4b5563; margin-bottom: 0.25rem;
+        }
+        #dataSummaryContainer strong { color: #1f2937; }
+        #logsSummaryList {
+            max-height: 300px; overflow-y: auto; padding-right: 0.5rem; 
+            border: 1px solid #e5e7eb; border-radius: 0.25rem; padding: 0.5rem;
+        }
+        .log-entry { padding: 0.5rem; border-bottom: 1px dashed #d1d5db; }
+        .log-entry:last-child { border-bottom: none; }
+        #weightChartCanvas { max-height: 400px; } /* Limit chart height */
     </style>
 </head>
 <body>
@@ -108,143 +102,67 @@
         <div id="setupScreen">
             <h2 class="text-xl font-semibold mb-4">Initial Setup</h2>
             <p class="text-sm text-gray-600 mb-4">Please provide some basic information to get started.</p>
-
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="input-group">
-                    <label for="currentWeight" class="input-label">Current Weight (kg)</label>
-                    <input type="number" id="currentWeight" class="input-field" placeholder="e.g., 70" step="0.1">
-                    <span id="currentWeightError" class="error-message"></span>
-                </div>
-                <div class="input-group">
-                    <label for="height" class="input-label">Height (cm)</label>
-                    <input type="number" id="height" class="input-field" placeholder="e.g., 175" step="0.1">
-                    <span id="heightError" class="error-message"></span>
-                </div>
-                <div class="input-group">
-                    <label for="age" class="input-label">Age</label>
-                    <input type="number" id="age" class="input-field" placeholder="e.g., 30" step="1">
-                    <span id="ageError" class="error-message"></span>
-                </div>
-                <div class="input-group">
-                    <label for="sex" class="input-label">Sex</label>
-                    <select id="sex" class="select-field">
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                    </select>
-                    <span id="sexError" class="error-message"></span>
-                </div>
+                <div class="input-group"><label for="currentWeight" class="input-label">Current Weight (kg)</label><input type="number" id="currentWeight" class="input-field" placeholder="e.g., 70" step="0.1"><span id="currentWeightError" class="error-message"></span></div>
+                <div class="input-group"><label for="height" class="input-label">Height (cm)</label><input type="number" id="height" class="input-field" placeholder="e.g., 175" step="0.1"><span id="heightError" class="error-message"></span></div>
+                <div class="input-group"><label for="age" class="input-label">Age</label><input type="number" id="age" class="input-field" placeholder="e.g., 30" step="1"><span id="ageError" class="error-message"></span></div>
+                <div class="input-group"><label for="sex" class="input-label">Sex</label><select id="sex" class="select-field"><option value="male">Male</option><option value="female">Female</option></select><span id="sexError" class="error-message"></span></div>
             </div>
-
-            <div class="input-group">
-                <label for="activityLevel" class="input-label">Activity Level</label>
-                <select id="activityLevel" class="select-field">
-                    <option value="1.2">Sedentary (little or no exercise)</option>
-                    <option value="1.375">Lightly active (light exercise 1-3 days/wk)</option>
-                    <option value="1.55">Moderately active (moderate exercise 3-5 days/wk)</option>
-                    <option value="1.725">Very active (hard exercise 6-7 days/wk)</option>
-                    <option value="1.9">Super active (very hard exercise & physical job)</option>
-                </select>
-                <span id="activityLevelError" class="error-message"></span>
-            </div>
-            <div class="input-group">
-                <label for="proteinGoalGramsPerKg" class="input-label">Protein Target (grams per kg body weight)</label>
-                <input type="number" id="proteinGoalGramsPerKg" class="input-field" value="1.8" step="0.1">
-                <span id="proteinGoalGramsPerKgError" class="error-message"></span>
-            </div>
-             <div class="input-group">
-                <label for="fatGoalPercentage" class="input-label">Fat Target (% of total calories, 20-50%)</label>
-                <input type="number" id="fatGoalPercentage" class="input-field" value="25" min="20" max="50" step="1">
-                <span id="fatGoalPercentageError" class="error-message"></span>
-            </div>
-            <div class="input-group">
-                <label for="weeklyGoal" class="input-label">Weekly Weight Goal</label>
-                <select id="weeklyGoal" class="select-field">
-                    <option value="-1">-1 kg/week (Aggressive Deficit)</option>
-                    <option value="-0.75">-0.75 kg/week (Large Deficit)</option>
-                    <option value="-0.5">-0.5 kg/week (Moderate Deficit)</option>
-                    <option value="-0.25">-0.25 kg/week (Small Deficit)</option>
-                    <option value="0" selected>Maintain Weight</option>
-                    <option value="0.125">+0.125 kg/week (Small Surplus)</option>
-                    <option value="0.25">+0.25 kg/week (Moderate Surplus)</option>
-                    <option value="0.5">+0.5 kg/week (Large Surplus)</option>
-                </select>
-                <span id="weeklyGoalError" class="error-message"></span>
-            </div>
+            <div class="input-group"><label for="activityLevel" class="input-label">Activity Level</label><select id="activityLevel" class="select-field"><option value="1.2">Sedentary</option><option value="1.375">Lightly active</option><option value="1.55">Moderately active</option><option value="1.725">Very active</option><option value="1.9">Super active</option></select><span id="activityLevelError" class="error-message"></span></div>
+            <div class="input-group"><label for="proteinGoalGramsPerKg" class="input-label">Protein Target (g/kg)</label><input type="number" id="proteinGoalGramsPerKg" class="input-field" value="1.8" step="0.1"><span id="proteinGoalGramsPerKgError" class="error-message"></span></div>
+            <div class="input-group"><label for="fatGoalPercentage" class="input-label">Fat Target (%, 20-50%)</label><input type="number" id="fatGoalPercentage" class="input-field" value="25" min="20" max="50" step="1"><span id="fatGoalPercentageError" class="error-message"></span></div>
+            <div class="input-group"><label for="weeklyGoal" class="input-label">Weekly Weight Goal</label><select id="weeklyGoal" class="select-field"><option value="-1">-1 kg/wk</option><option value="-0.75">-0.75 kg/wk</option><option value="-0.5">-0.5 kg/wk</option><option value="-0.25">-0.25 kg/wk</option><option value="0" selected>Maintain</option><option value="0.125">+0.125 kg/wk</option><option value="0.25">+0.25 kg/wk</option><option value="0.5">+0.5 kg/wk</option></select><span id="weeklyGoalError" class="error-message"></span></div>
             <button id="saveSetupBtn" class="button">Save Setup & Start Tracking</button>
             <p id="setupOverallError" class="error-message text-center font-semibold"></p>
         </div>
 
         <div id="dashboardScreen">
-            <div class="text-center mb-4">
-                <p class="text-gray-600">Today: <span id="currentDateDisplay" class="font-medium"></span></p>
-            </div>
-
+            <div class="text-center mb-4"><p class="text-gray-600">Today: <span id="currentDateDisplay" class="font-medium"></span></p></div>
             <div class="info-box mb-6">
                 <h3 class="text-lg">Current Targets</h3>
-                <p>Calories: <strong id="targetCaloriesDisplay">N/A</strong> kcal</p>
-                <p>Protein: <strong id="targetProteinDisplay">N/A</strong> g</p>
-                <p>Carbs: <strong id="targetCarbsDisplay">N/A</strong> g</p>
-                <p>Fat: <strong id="targetFatDisplay">N/A</strong> g</p>
+                <p>Calories: <strong id="targetCaloriesDisplay">N/A</strong> kcal</p><p>Protein: <strong id="targetProteinDisplay">N/A</strong> g</p>
+                <p>Carbs: <strong id="targetCarbsDisplay">N/A</strong> g</p><p>Fat: <strong id="targetFatDisplay">N/A</strong> g</p>
                 <p class="mt-2">Estimated TDEE: <strong id="tdeeDisplay">N/A</strong> kcal (Last Check-in: <span id="lastCheckinTDEEDate">N/A</span>)</p>
             </div>
-
             <h2 class="text-xl font-semibold mb-3">Log Data</h2>
-            <div class="input-group">
-                <label for="logDate" class="input-label">Date to Log/View</label>
-                <input type="date" id="logDate" class="input-field">
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="input-group">
-                    <label for="logWeight" class="input-label">Weight (kg)</label>
-                    <input type="number" id="logWeight" class="input-field" placeholder="Your weight" step="0.1">
-                    <span id="logWeightError" class="error-message"></span>
-                </div>
-            </div>
+            <div class="input-group"><label for="logDate" class="input-label">Date to Log/View</label><input type="date" id="logDate" class="input-field"></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="input-group"><label for="logWeight" class="input-label">Weight (kg)</label><input type="number" id="logWeight" class="input-field" placeholder="Your weight" step="0.1"><span id="logWeightError" class="error-message"></span></div></div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="input-group">
-                    <label for="logProtein" class="input-label">Protein (g)</label>
-                    <input type="number" id="logProtein" class="input-field" placeholder="e.g., 150" step="1">
-                    <span id="logProteinError" class="error-message"></span>
-                </div>
-                <div class="input-group">
-                    <label for="logCarbs" class="input-label">Carbs (g)</label>
-                    <input type="number" id="logCarbs" class="input-field" placeholder="e.g., 200" step="1">
-                    <span id="logCarbsError" class="error-message"></span>
-                </div>
-                <div class="input-group">
-                    <label for="logFat" class="input-label">Fat (g)</label>
-                    <input type="number" id="logFat" class="input-field" placeholder="e.g., 60" step="1">
-                    <span id="logFatError" class="error-message"></span>
-                </div>
+                <div class="input-group"><label for="logProtein" class="input-label">Protein (g)</label><input type="number" id="logProtein" class="input-field" placeholder="e.g., 150" step="1"><span id="logProteinError" class="error-message"></span></div>
+                <div class="input-group"><label for="logCarbs" class="input-label">Carbs (g)</label><input type="number" id="logCarbs" class="input-field" placeholder="e.g., 200" step="1"><span id="logCarbsError" class="error-message"></span></div>
+                <div class="input-group"><label for="logFat" class="input-label">Fat (g)</label><input type="number" id="logFat" class="input-field" placeholder="e.g., 60" step="1"><span id="logFatError" class="error-message"></span></div>
             </div>
             <button id="logDataBtn" class="button">Log/Update Data for <span id="logDateDisplay">Selected Date</span></button>
             <button id="clearLogDayBtn" class="button button-warning mt-2">Clear Log for <span id="clearLogDateDisplay">Selected Date</span></button>
-            <p id="logOverallError" class="error-message text-center font-semibold"></p>
-            <p id="logSuccess" class="success-message"></p>
-
+            <p id="logOverallError" class="error-message text-center font-semibold"></p><p id="logSuccess" class="success-message"></p>
             <hr>
-
             <h2 class="text-xl font-semibold mb-3">Weekly Check-in</h2>
-            <p class="text-sm text-gray-600 mb-2">Perform a check-in to update TDEE & targets. Recommended weekly/bi-weekly with consistent logging.</p>
-            <p class="text-sm text-gray-600 mb-2">Days with full logs (weight & calories) in last 4 weeks: <strong id="daysLoggedForCheckin">0</strong> (Need at least <span id="minLogsRequiredDisplay"></span>)</p>
-            <button id="checkinBtn" class="button button-secondary" disabled>Perform Weekly Check-in</button>
-            <p id="checkinMessage" class="mt-2 text-sm text-center"></p>
-
+            <p class="text-sm text-gray-600 mb-2">Perform a check-in to update TDEE & targets. Recommended weekly/bi-weekly.</p>
+            <p class="text-sm text-gray-600 mb-2">Days with full logs in last 4 weeks: <strong id="daysLoggedForCheckin">0</strong> (Need at least <span id="minLogsRequiredDisplay"></span>)</p>
+            <button id="checkinBtn" class="button button-secondary" disabled>Perform Weekly Check-in</button><p id="checkinMessage" class="mt-2 text-sm text-center"></p>
             <hr>
-            <button id="viewLogsBtn" class="button button-secondary mt-2">View Logs (Console)</button>
+            <button id="toggleDataSummaryBtn" class="button button-secondary mt-2">View My Data Summary</button>
+            <div id="dataSummaryContainer" style="display: none;">
+                <div><h3>User Profile</h3><div id="profileSummary"></div></div>
+                <div class="mt-4"><h3>Current Targets</h3><div id="targetsSummary"></div></div>
+                <div class="mt-4"><h3>Daily Logs <span id="logCount">(0 entries)</span></h3><div id="logsSummaryList"></div></div>
+            </div>
+            <button id="toggleWeightChartBtn" class="button button-secondary mt-2">View Weight Trend Chart</button>
+            <div id="weightChartContainer" style="display: none;">
+                <h3>Weekly Average Weight Trend</h3>
+                <canvas id="weightChartCanvas"></canvas>
+                <p id="chartMessage" class="text-sm text-center mt-2"></p>
+            </div>
+            <button id="viewLogsBtn" class="button button-secondary mt-2">View Raw Logs (Console)</button>
             <button id="resetDataBtn" class="button button-danger mt-2">Reset All Data</button>
         </div>
     </div>
 
     <script>
         // --- Constants ---
-        const CALORIES_PER_G_PROTEIN = 4;
-        const CALORIES_PER_G_CARB = 4;
-        const CALORIES_PER_G_FAT = 9;
-        const CALORIES_PER_KG_FAT_TISSUE = 7700;
-        const TDEE_SMOOTHING_FACTOR = 0.3; 
-        const CHECKIN_ANALYSIS_DAYS_WINDOW = 28; 
-        const MIN_LOGS_FOR_CHECKIN = 10; 
+        const CALORIES_PER_G_PROTEIN = 4; const CALORIES_PER_G_CARB = 4; const CALORIES_PER_G_FAT = 9;
+        const CALORIES_PER_KG_FAT_TISSUE = 7700; const TDEE_SMOOTHING_FACTOR = 0.3; 
+        const CHECKIN_ANALYSIS_DAYS_WINDOW = 28; const MIN_LOGS_FOR_CHECKIN = 10; 
         const WEIGHT_TREND_DAYS = 3; 
 
         // --- DOM Elements ---
@@ -259,7 +177,6 @@
         const weeklyGoalSelect = document.getElementById('weeklyGoal');
         const saveSetupBtn = document.getElementById('saveSetupBtn');
         const setupOverallError = document.getElementById('setupOverallError');
-
         const dashboardScreen = document.getElementById('dashboardScreen');
         const currentDateDisplay = document.getElementById('currentDateDisplay');
         const targetCaloriesDisplay = document.getElementById('targetCaloriesDisplay');
@@ -285,430 +202,422 @@
         const checkinMessage = document.getElementById('checkinMessage');
         const viewLogsBtn = document.getElementById('viewLogsBtn');
         const resetDataBtn = document.getElementById('resetDataBtn');
+        const toggleDataSummaryBtn = document.getElementById('toggleDataSummaryBtn');
+        const dataSummaryContainer = document.getElementById('dataSummaryContainer');
+        const profileSummaryDiv = document.getElementById('profileSummary');
+        const targetsSummaryDiv = document.getElementById('targetsSummary');
+        const logsSummaryListDiv = document.getElementById('logsSummaryList');
+        const logCountSpan = document.getElementById('logCount');
+        // NEW DOM Elements for Chart
+        const toggleWeightChartBtn = document.getElementById('toggleWeightChartBtn');
+        const weightChartContainer = document.getElementById('weightChartContainer');
+        const weightChartCanvas = document.getElementById('weightChartCanvas').getContext('2d'); // Get 2D context
+        const chartMessage = document.getElementById('chartMessage');
+        let weightChartInstance = null; // To store the Chart.js instance
+
 
         // --- App State & localStorage Keys ---
-        const PROFILE_KEY = 'adaptiveMacroTracker_profile_v3';
-        const LOGS_KEY = 'adaptiveMacroTracker_logs_v3';
-        const TARGETS_KEY = 'adaptiveMacroTracker_targets_v3';
+        const PROFILE_KEY = 'adaptiveMacroTracker_profile_v4'; 
+        const LOGS_KEY = 'adaptiveMacroTracker_logs_v4';
+        const TARGETS_KEY = 'adaptiveMacroTracker_targets_v4';
 
-        let userProfile = {};
-        let dailyLogs = []; 
-        let currentTargets = {}; 
+        let userProfile = {}; let dailyLogs = []; let currentTargets = {}; 
 
         // --- Utility Functions ---
-        function getTodayDateString() {
-            const today = new Date();
-            return today.toISOString().split('T')[0];
-        }
-
-        function formatDate(dateString) {
+        function getTodayDateString() { return new Date().toISOString().split('T')[0]; }
+        function formatDateForDisplay(dateString) { 
             if (!dateString) return 'N/A';
-            const date = new Date(dateString + 'T00:00:00'); // Ensure local timezone
+            const date = new Date(dateString + 'T00:00:00'); 
             return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
         }
-        
         function NdayAgoDateString(daysAgo) {
-            const date = new Date();
-            date.setDate(date.getDate() - daysAgo);
+            const date = new Date(); date.setDate(date.getDate() - daysAgo);
             return date.toISOString().split('T')[0];
         }
-
-        /**
-         * Validates a single input field and updates its error message and style.
-         * @param {HTMLInputElement} inputEl - The input element.
-         * @param {string} fieldName - Name for error messages.
-         * @param {object} rules - Validation rules { allowZero, allowNegative, isOptional, min, max }.
-         * @returns {boolean} True if valid, false otherwise.
-         */
-        function validateField(inputEl, fieldName, rules = {}) {
-            const errorEl = document.getElementById(`${inputEl.id}Error`) || { textContent: '' }; // Graceful fallback for overall errors
-            errorEl.textContent = '';
-            inputEl.classList.remove('invalid');
+        function validateField(inputEl, fieldName, rules = {}) { /* ... (same as before) ... */ 
+            const errorEl = document.getElementById(`${inputEl.id}Error`) || { textContent: '' }; 
+            errorEl.textContent = ''; inputEl.classList.remove('invalid');
             const value = inputEl.value;
-
             if (rules.isOptional && String(value).trim() === '') return true;
             if (!rules.isOptional && String(value).trim() === '') {
-                errorEl.textContent = `${fieldName} is required.`;
-                inputEl.classList.add('invalid');
-                return false;
+                errorEl.textContent = `${fieldName} is required.`; inputEl.classList.add('invalid'); return false;
             }
-
             const num = parseFloat(value);
             if (isNaN(num)) {
-                errorEl.textContent = `${fieldName} must be a number.`;
-                inputEl.classList.add('invalid');
-                return false;
+                errorEl.textContent = `${fieldName} must be a number.`; inputEl.classList.add('invalid'); return false;
             }
             if (!rules.allowNegative && num < 0) {
-                errorEl.textContent = `${fieldName} cannot be negative.`;
-                inputEl.classList.add('invalid');
-                return false;
+                errorEl.textContent = `${fieldName} cannot be negative.`; inputEl.classList.add('invalid'); return false;
             }
             if (!rules.allowZero && num === 0 && !rules.isOptional) {
-                errorEl.textContent = `${fieldName} cannot be zero.`;
-                inputEl.classList.add('invalid');
-                return false;
+                errorEl.textContent = `${fieldName} cannot be zero.`; inputEl.classList.add('invalid'); return false;
             }
             if (rules.min !== undefined && num < rules.min) {
-                errorEl.textContent = `${fieldName} must be at least ${rules.min}.`;
-                inputEl.classList.add('invalid');
-                return false;
+                errorEl.textContent = `${fieldName} must be at least ${rules.min}.`; inputEl.classList.add('invalid'); return false;
             }
             if (rules.max !== undefined && num > rules.max) {
-                errorEl.textContent = `${fieldName} must be no more than ${rules.max}.`;
-                inputEl.classList.add('invalid');
-                return false;
+                errorEl.textContent = `${fieldName} must be no more than ${rules.max}.`; inputEl.classList.add('invalid'); return false;
             }
             return true;
         }
         
         // --- Data Persistence ---
-        function loadData() {
+        function loadData() { /* ... (same as before) ... */ 
             userProfile = JSON.parse(localStorage.getItem(PROFILE_KEY)) || null;
             dailyLogs = JSON.parse(localStorage.getItem(LOGS_KEY)) || [];
             currentTargets = JSON.parse(localStorage.getItem(TARGETS_KEY)) || {};
         }
-
-        function saveData() {
+        function saveData() { /* ... (same as before) ... */ 
             localStorage.setItem(PROFILE_KEY, JSON.stringify(userProfile));
             localStorage.setItem(LOGS_KEY, JSON.stringify(dailyLogs));
             localStorage.setItem(TARGETS_KEY, JSON.stringify(currentTargets));
         }
 
         // --- Calculation Functions ---
-        function calculateBMR(profile) {
-            const weightKg = parseFloat(profile.currentWeight); 
-            const heightCm = parseFloat(profile.height);
-            const ageYears = parseFloat(profile.age);
-            let bmr;
-            if (profile.sex === 'male') {
-                bmr = (10 * weightKg) + (6.25 * heightCm) - (5 * ageYears) + 5;
-            } else { 
-                bmr = (10 * weightKg) + (6.25 * heightCm) - (5 * ageYears) - 161;
+        function calculateBMR(profile) { /* ... (same as before) ... */ 
+            const w = parseFloat(profile.currentWeight), h = parseFloat(profile.height), a = parseFloat(profile.age);
+            return profile.sex === 'male' ? (10*w)+(6.25*h)-(5*a)+5 : (10*w)+(6.25*h)-(5*a)-161;
+        }
+        function calculateInitialTDEE(profile) { return calculateBMR(profile) * parseFloat(profile.activityLevel); }
+        function calculateTargets(tdee, profile, weightKg) { /* ... (same as before) ... */ 
+            const goal = parseFloat(profile.weeklyGoal), adj = goal * (CALORIES_PER_KG_FAT_TISSUE / 7);
+            let cal = tdee + adj;
+            const pGramsKg = parseFloat(profile.proteinGoalGramsPerKg);
+            let pGrams = pGramsKg * weightKg;
+            const fatPerc = parseFloat(profile.fatGoalPercentage) / 100;
+            let fGrams = (cal * fatPerc) / CALORIES_PER_G_FAT;
+            const minFGrams = 0.66 * weightKg;
+            if (fGrams < minFGrams) fGrams = minFGrams;
+            let pCal = pGrams * CALORIES_PER_G_PROTEIN, fCal = fGrams * CALORIES_PER_G_FAT;
+            let remCalCarb = cal - pCal - fCal;
+            if (remCalCarb < 0) {
+                const minFCal = minFGrams * CALORIES_PER_G_FAT;
+                if (fCal > minFCal) { fCal = Math.max(minFCal, cal - pCal); fGrams = fCal / CALORIES_PER_G_FAT; }
+                remCalCarb = Math.max(0, cal - pCal - fCal);
             }
-            return bmr;
+            const cGrams = remCalCarb / CALORIES_PER_G_CARB;
+            cal = pCal + cGrams * CALORIES_PER_G_CARB + fCal;
+            return { calories: Math.round(cal), protein: Math.round(pGrams), carbs: Math.round(cGrams), fat: Math.round(fGrams), estimatedTDEE: Math.round(tdee), lastTDEECalculationDate: getTodayDateString() };
         }
-
-        function calculateInitialTDEE(profile) {
-            return calculateBMR(profile) * parseFloat(profile.activityLevel);
-        }
-
-        function calculateTargets(tdee, profile, currentWeightForMacrosKg) {
-            const weeklyGoalKg = parseFloat(profile.weeklyGoal);
-            const calorieAdjustment = weeklyGoalKg * (CALORIES_PER_KG_FAT_TISSUE / 7); 
-            let targetCalories = tdee + calorieAdjustment;
-            const proteinGramsPerKg = parseFloat(profile.proteinGoalGramsPerKg);
-            let proteinGrams = proteinGramsPerKg * currentWeightForMacrosKg;
-            const fatPercentage = parseFloat(profile.fatGoalPercentage) / 100;
-            let fatGrams = (targetCalories * fatPercentage) / CALORIES_PER_G_FAT;
-            const minFatGrams = 0.66 * currentWeightForMacrosKg; 
-            if (fatGrams < minFatGrams) fatGrams = minFatGrams;
-            
-            let proteinCalories = proteinGrams * CALORIES_PER_G_PROTEIN;
-            let fatCalories = fatGrams * CALORIES_PER_G_FAT;
-            let remainingCaloriesForCarbs = targetCalories - proteinCalories - fatCalories;
-
-            if (remainingCaloriesForCarbs < 0) {
-                const minFatCalories = minFatGrams * CALORIES_PER_G_FAT;
-                if (fatCalories > minFatCalories) {
-                    fatCalories = Math.max(minFatCalories, targetCalories - proteinCalories); 
-                    fatGrams = fatCalories / CALORIES_PER_G_FAT;
-                }
-                remainingCaloriesForCarbs = Math.max(0, targetCalories - proteinCalories - fatCalories);
-            }
-            const carbGrams = remainingCaloriesForCarbs / CALORIES_PER_G_CARB;
-            targetCalories = (proteinGrams * CALORIES_PER_G_PROTEIN) + 
-                             (carbGrams * CALORIES_PER_G_CARB) + 
-                             (fatGrams * CALORIES_PER_G_FAT);
-            return {
-                calories: Math.round(targetCalories), protein: Math.round(proteinGrams),
-                carbs: Math.round(carbGrams), fat: Math.round(fatGrams),
-                estimatedTDEE: Math.round(tdee), lastTDEECalculationDate: getTodayDateString()
-            };
-        }
-        
-        function getAverageWeight(logsSubset) {
+        function getAverageWeight(logsSubset) { /* ... (same as before) ... */ 
             if (!logsSubset || logsSubset.length === 0) return null;
-            const validWeightLogs = logsSubset.filter(log => log.weight !== null && typeof log.weight === 'number' && log.weight > 0);
-            if (validWeightLogs.length === 0) return null;
-            return validWeightLogs.reduce((sum, log) => sum + log.weight, 0) / validWeightLogs.length;
+            const valid = logsSubset.filter(l => l.weight !== null && typeof l.weight ==='number' && l.weight > 0);
+            return valid.length === 0 ? null : valid.reduce((s, l) => s + l.weight, 0) / valid.length;
         }
 
         // --- UI Update Functions ---
-        function showScreen(screenId) {
-            setupScreen.style.display = 'none';
-            dashboardScreen.style.display = 'none';
+        function showScreen(screenId) { /* ... (same as before) ... */ 
+            setupScreen.style.display = 'none'; dashboardScreen.style.display = 'none';
             document.getElementById(screenId).style.display = 'block';
         }
-
-        function updateDashboardUI() {
-            if (!userProfile) {
-                showScreen('setupScreen');
-                return;
-            }
+        function updateDashboardUI() { /* ... (same as before, with additions for chart refresh) ... */ 
+            if (!userProfile) { showScreen('setupScreen'); return; }
             showScreen('dashboardScreen');
-            currentDateDisplay.textContent = formatDate(getTodayDateString());
+            currentDateDisplay.textContent = formatDateForDisplay(getTodayDateString());
             if (!logDateInput.value) logDateInput.value = getTodayDateString();
-            logDateDisplay.textContent = formatDate(logDateInput.value);
-            clearLogDateDisplay.textContent = formatDate(logDateInput.value);
+            logDateDisplay.textContent = formatDateForDisplay(logDateInput.value);
+            clearLogDateDisplay.textContent = formatDateForDisplay(logDateInput.value);
 
-            targetCaloriesDisplay.textContent = currentTargets.calories ? `${currentTargets.calories}` : 'N/A';
-            targetProteinDisplay.textContent = currentTargets.protein ? `${currentTargets.protein}` : 'N/A';
-            targetCarbsDisplay.textContent = currentTargets.carbs ? `${currentTargets.carbs}` : 'N/A';
-            targetFatDisplay.textContent = currentTargets.fat ? `${currentTargets.fat}` : 'N/A';
-            tdeeDisplay.textContent = currentTargets.estimatedTDEE ? `${currentTargets.estimatedTDEE}` : 'N/A';
-            lastCheckinTDEEDateDisplay.textContent = currentTargets.lastTDEECalculationDate ? formatDate(currentTargets.lastTDEECalculationDate) : 'Initial Setup';
+            targetCaloriesDisplay.textContent = currentTargets.calories || 'N/A';
+            targetProteinDisplay.textContent = currentTargets.protein || 'N/A';
+            targetCarbsDisplay.textContent = currentTargets.carbs || 'N/A';
+            targetFatDisplay.textContent = currentTargets.fat || 'N/A';
+            tdeeDisplay.textContent = currentTargets.estimatedTDEE || 'N/A';
+            lastCheckinTDEEDateDisplay.textContent = currentTargets.lastTDEECalculationDate ? formatDateForDisplay(currentTargets.lastTDEECalculationDate) : 'Initial';
             minLogsRequiredDisplay.textContent = MIN_LOGS_FOR_CHECKIN;
 
-            const analysisWindowStart = NdayAgoDateString(CHECKIN_ANALYSIS_DAYS_WINDOW -1);
-            const logsInWindow = dailyLogs.filter(log => 
-                log.date >= analysisWindowStart && 
-                log.weight !== null && typeof log.weight === 'number' && log.weight > 0 &&
-                log.calories !== null && typeof log.calories === 'number' && log.calories > 0
-            );
-            daysLoggedForCheckinDisplay.textContent = `${logsInWindow.length}`;
-            checkinBtn.disabled = logsInWindow.length < MIN_LOGS_FOR_CHECKIN;
+            const analysisStart = NdayAgoDateString(CHECKIN_ANALYSIS_DAYS_WINDOW -1);
+            const logsInWin = dailyLogs.filter(l => l.date >= analysisStart && l.weight > 0 && l.calories > 0);
+            daysLoggedForCheckinDisplay.textContent = `${logsInWin.length}`;
+            checkinBtn.disabled = logsInWin.length < MIN_LOGS_FOR_CHECKIN;
             checkinBtn.classList.toggle('button-secondary', checkinBtn.disabled);
+            
+            if (dataSummaryContainer.style.display !== 'none') displayStoredDataSummary();
+            // NEW: Refresh chart if visible
+            if (weightChartContainer.style.display !== 'none') {
+                const chartData = calculateWeeklyAverageWeights();
+                renderWeightChart(chartData);
+            }
         }
-        
-        function prefillLogData(date) {
-            const existingLog = dailyLogs.find(log => log.date === date);
-            logWeightInput.value = existingLog?.weight || '';
-            logProteinInput.value = existingLog?.protein || '';
-            logCarbsInput.value = existingLog?.carbs || '';
-            logFatInput.value = existingLog?.fat || '';
-            // Clear previous validation states for log fields
+        function prefillLogData(date) { /* ... (same as before) ... */ 
+            const log = dailyLogs.find(l => l.date === date);
+            logWeightInput.value = log?.weight || ''; logProteinInput.value = log?.protein || '';
+            logCarbsInput.value = log?.carbs || ''; logFatInput.value = log?.fat || '';
             [logWeightInput, logProteinInput, logCarbsInput, logFatInput].forEach(el => {
                 el.classList.remove('invalid');
-                const errorEl = document.getElementById(`${el.id}Error`);
-                if(errorEl) errorEl.textContent = '';
+                const errEl = document.getElementById(`${el.id}Error`); if(errEl) errEl.textContent = '';
             });
-            if (existingLog) {
-                logSuccess.textContent = `Prefilled data for ${formatDate(date)}. You can update it.`;
-            } else {
-                logSuccess.textContent = '';
-            }
+            logSuccess.textContent = log ? `Prefilled data for ${formatDateForDisplay(date)}.` : '';
             logOverallError.textContent = '';
         }
+        function displayStoredDataSummary() { /* ... (same as before) ... */ 
+            let profileHTML = '<p>No profile.</p>';
+            if (userProfile) {
+                profileHTML = `<p><strong>Initial Weight:</strong> ${userProfile.currentWeight||'N/A'} kg</p> <p><strong>Height:</strong> ${userProfile.height||'N/A'} cm</p> <p><strong>Age:</strong> ${userProfile.age||'N/A'}</p> <p><strong>Sex:</strong> ${userProfile.sex||'N/A'}</p> <p><strong>Activity Factor:</strong> ${userProfile.activityLevel||'N/A'}</p> <p><strong>Protein Goal:</strong> ${userProfile.proteinGoalGramsPerKg||'N/A'} g/kg</p> <p><strong>Fat Goal:</strong> ${userProfile.fatGoalPercentage||'N/A'}%</p> <p><strong>Weekly Goal:</strong> ${userProfile.weeklyGoal||'N/A'} kg</p> <p><strong>Setup:</strong> ${formatDateForDisplay(userProfile.setupDate)||'N/A'}</p>`;
+            }
+            profileSummaryDiv.innerHTML = profileHTML;
+            let targetsHTML = '<p>No targets.</p>';
+            if (currentTargets && currentTargets.calories) {
+                targetsHTML = `<p><strong>Calories:</strong> ${currentTargets.calories} kcal</p> <p><strong>Protein:</strong> ${currentTargets.protein} g</p> <p><strong>Carbs:</strong> ${currentTargets.carbs} g</p> <p><strong>Fat:</strong> ${currentTargets.fat} g</p> <p><strong>Est. TDEE:</strong> ${currentTargets.estimatedTDEE} kcal</p> <p><strong>Last Calc:</strong> ${formatDateForDisplay(currentTargets.lastTDEECalculationDate)}</p>`;
+            }
+            targetsSummaryDiv.innerHTML = targetsHTML;
+            let logsHTML = '<li>No logs.</li>';
+            const reversedLogs = [...dailyLogs].reverse(); 
+            logCountSpan.textContent = `(${dailyLogs.length} entries)`;
+            if (reversedLogs.length > 0) {
+                logsHTML = reversedLogs.map(log => `<li class="log-entry"><p><strong>Date: ${formatDateForDisplay(log.date)}</strong></p><p>Weight: ${log.weight !== null ? log.weight + ' kg' : 'N/A'}</p><p>Calories: ${log.calories !== null ? log.calories + ' kcal' : 'N/A'}</p><p>Macros (P/C/F): ${log.protein !== null ? log.protein + 'g' : 'N/A'} / ${log.carbs !== null ? log.carbs + 'g' : 'N/A'} / ${log.fat !== null ? log.fat + 'g' : 'N/A'}</p></li>`).join('');
+            }
+            logsSummaryListDiv.innerHTML = logsHTML;
+        }
 
-        logDateInput.addEventListener('change', () => {
-            const selectedDate = logDateInput.value;
-            logDateDisplay.textContent = formatDate(selectedDate);
-            clearLogDateDisplay.textContent = formatDate(selectedDate);
-            prefillLogData(selectedDate);
-        });
+        // --- NEW Charting Functions ---
+        /**
+         * Calculates the start of the ISO week for a given date.
+         * Monday is considered the first day of the week.
+         * @param {Date} date - The input date.
+         * @returns {Date} The date of the Monday of that week.
+         */
+        function getStartOfWeek(date) {
+            const d = new Date(date);
+            const day = d.getDay(); // Sunday - 0, Monday - 1, ..., Saturday - 6
+            const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
+            return new Date(d.setDate(diff));
+        }
+
+        function calculateWeeklyAverageWeights() {
+            if (dailyLogs.length === 0) return { labels: [], data: [] };
+
+            const weeklyData = {}; // Key: YYYY-MM-DD (start of week), Value: { sum: 0, count: 0 }
+            
+            dailyLogs.forEach(log => {
+                if (log.weight !== null && typeof log.weight === 'number' && log.weight > 0) {
+                    const logDate = new Date(log.date + 'T00:00:00'); // Ensure local date
+                    const startOfWeekDate = getStartOfWeek(logDate);
+                    const weekKey = startOfWeekDate.toISOString().split('T')[0];
+
+                    if (!weeklyData[weekKey]) {
+                        weeklyData[weekKey] = { sum: 0, count: 0, weights: [] };
+                    }
+                    weeklyData[weekKey].weights.push(log.weight);
+                }
+            });
+
+            const labels = [];
+            const data = [];
+
+            // Sort week keys chronologically
+            const sortedWeekKeys = Object.keys(weeklyData).sort();
+
+            sortedWeekKeys.forEach(weekKey => {
+                const week = weeklyData[weekKey];
+                if (week.weights.length > 0) {
+                    const averageWeight = week.weights.reduce((acc, w) => acc + w, 0) / week.weights.length;
+                    labels.push(formatDateForDisplay(weekKey)); // Format for display
+                    data.push(parseFloat(averageWeight.toFixed(2))); // Store as number, rounded
+                }
+            });
+            return { labels, data };
+        }
+
+        function renderWeightChart(chartData) {
+            chartMessage.textContent = ''; // Clear previous messages
+            if (weightChartInstance) {
+                weightChartInstance.destroy(); // Destroy previous instance to prevent conflicts
+            }
+            if (!chartData || chartData.labels.length < 2) { // Need at least 2 points for a meaningful line
+                chartMessage.textContent = 'Not enough data to display a weight trend chart. Please log more weekly weights.';
+                return;
+            }
+
+            weightChartInstance = new Chart(weightChartCanvas, {
+                type: 'line',
+                data: {
+                    labels: chartData.labels,
+                    datasets: [{
+                        label: 'Average Weekly Weight (kg)',
+                        data: chartData.data,
+                        borderColor: '#4f46e5', // Indigo
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)', // Light indigo fill
+                        tension: 0.1, // Makes the line slightly curved
+                        fill: true,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#4f46e5',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // Allow chart to fill container height better
+                    scales: {
+                        y: {
+                            beginAtZero: false, // Don't necessarily start y-axis at 0
+                            title: { display: true, text: 'Weight (kg)' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Week Starting' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: true, position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y} kg`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
 
         // --- Event Handlers ---
-        function setupInputValidationListeners() {
-            // Setup screen
-            currentWeightInput.addEventListener('input', () => validateField(currentWeightInput, 'Current Weight', {allowZero: false, allowNegative: false}));
-            heightInput.addEventListener('input', () => validateField(heightInput, 'Height', {allowZero: false, allowNegative: false}));
-            ageInput.addEventListener('input', () => validateField(ageInput, 'Age', {allowZero: false, allowNegative: false}));
-            proteinGoalGramsPerKgInput.addEventListener('input', () => validateField(proteinGoalGramsPerKgInput, 'Protein Target', {allowZero: false, allowNegative: false, min: 0.5, max: 3.0}));
-            fatGoalPercentageInput.addEventListener('input', () => validateField(fatGoalPercentageInput, 'Fat Target', {allowZero: false, allowNegative: false, min: 20, max: 50}));
-            
-            // Log screen (optional fields, so validation is slightly different)
-            logWeightInput.addEventListener('input', () => validateField(logWeightInput, 'Weight', {isOptional: true, allowZero: true, allowNegative: false}));
-            logProteinInput.addEventListener('input', () => validateField(logProteinInput, 'Protein', {isOptional: true, allowZero: true, allowNegative: false}));
-            logCarbsInput.addEventListener('input', () => validateField(logCarbsInput, 'Carbs', {isOptional: true, allowZero: true, allowNegative: false}));
-            logFatInput.addEventListener('input', () => validateField(logFatInput, 'Fat', {isOptional: true, allowZero: true, allowNegative: false}));
+        function setupInputValidationListeners() { /* ... (same as before) ... */ 
+            currentWeightInput.addEventListener('input', () => validateField(currentWeightInput, 'Weight', {allowZero:false,allowNegative:false}));
+            heightInput.addEventListener('input', () => validateField(heightInput, 'Height', {allowZero:false,allowNegative:false}));
+            ageInput.addEventListener('input', () => validateField(ageInput, 'Age', {allowZero:false,allowNegative:false}));
+            proteinGoalGramsPerKgInput.addEventListener('input', () => validateField(proteinGoalGramsPerKgInput, 'Protein Target', {min:0.5,max:3}));
+            fatGoalPercentageInput.addEventListener('input', () => validateField(fatGoalPercentageInput, 'Fat Target', {min:20,max:50}));
+            logWeightInput.addEventListener('input', () => validateField(logWeightInput, 'Weight', {isOptional:true,allowZero:true}));
+            logProteinInput.addEventListener('input', () => validateField(logProteinInput, 'Protein', {isOptional:true,allowZero:true}));
+            logCarbsInput.addEventListener('input', () => validateField(logCarbsInput, 'Carbs', {isOptional:true,allowZero:true}));
+            logFatInput.addEventListener('input', () => validateField(logFatInput, 'Fat', {isOptional:true,allowZero:true}));
         }
-
-        saveSetupBtn.addEventListener('click', () => {
-            setupOverallError.textContent = '';
-            let isValid = true;
-            isValid = validateField(currentWeightInput, 'Current Weight', {allowZero: false, allowNegative: false}) && isValid;
-            isValid = validateField(heightInput, 'Height', {allowZero: false, allowNegative: false}) && isValid;
-            isValid = validateField(ageInput, 'Age', {allowZero: false, allowNegative: false}) && isValid;
-            isValid = validateField(proteinGoalGramsPerKgInput, 'Protein Target', {allowZero: false, allowNegative: false, min: 0.5, max: 3.0}) && isValid; // Example min/max
-            isValid = validateField(fatGoalPercentageInput, 'Fat Target', {allowZero: false, allowNegative: false, min: 20, max: 50}) && isValid;
-
-            if (!isValid) {
-                setupOverallError.textContent = 'Please correct the errors above.';
-                return;
-            }
-            
-            userProfile = {
-                currentWeight: currentWeightInput.value, height: heightInput.value, age: ageInput.value,
-                sex: sexSelect.value, activityLevel: activityLevelSelect.value,
-                proteinGoalGramsPerKg: proteinGoalGramsPerKgInput.value,
-                fatGoalPercentage: fatGoalPercentageInput.value, weeklyGoal: weeklyGoalSelect.value,
-                setupDate: getTodayDateString()
-            };
-            const initialTDEE = calculateInitialTDEE(userProfile);
-            currentTargets = calculateTargets(initialTDEE, userProfile, parseFloat(userProfile.currentWeight)); 
-            dailyLogs = [{ date: userProfile.setupDate, weight: parseFloat(userProfile.currentWeight), protein: null, carbs: null, fat: null, calories: null }];
-            saveData();
-            updateDashboardUI();
+        saveSetupBtn.addEventListener('click', () => { /* ... (same as before) ... */ 
+            setupOverallError.textContent = ''; let isValid = true;
+            isValid = validateField(currentWeightInput, 'Weight',{allowZero:false,allowNegative:false}) && isValid;
+            isValid = validateField(heightInput, 'Height',{allowZero:false,allowNegative:false}) && isValid;
+            isValid = validateField(ageInput, 'Age',{allowZero:false,allowNegative:false}) && isValid;
+            isValid = validateField(proteinGoalGramsPerKgInput, 'Protein',{min:0.5,max:3}) && isValid;
+            isValid = validateField(fatGoalPercentageInput, 'Fat %',{min:20,max:50}) && isValid;
+            if (!isValid) { setupOverallError.textContent = 'Correct errors above.'; return; }
+            userProfile = { currentWeight:currentWeightInput.value, height:heightInput.value, age:ageInput.value, sex:sexSelect.value, activityLevel:activityLevelSelect.value, proteinGoalGramsPerKg:proteinGoalGramsPerKgInput.value, fatGoalPercentage:fatGoalPercentageInput.value, weeklyGoal:weeklyGoalSelect.value, setupDate:getTodayDateString() };
+            currentTargets = calculateTargets(calculateInitialTDEE(userProfile), userProfile, parseFloat(userProfile.currentWeight)); 
+            dailyLogs = [{ date:userProfile.setupDate, weight:parseFloat(userProfile.currentWeight),protein:null,carbs:null,fat:null,calories:null }]; // Use full property names
+            saveData(); updateDashboardUI();
         });
-
-        logDataBtn.addEventListener('click', () => {
-            logOverallError.textContent = '';
-            logSuccess.textContent = '';
-            const date = logDateInput.value;
-
+        logDataBtn.addEventListener('click', () => { /* ... (same as before, ensure full property names for logEntry) ... */ 
+            logOverallError.textContent = ''; logSuccess.textContent = ''; const date = logDateInput.value;
             let isValid = true;
-            // Validate only if fields are not empty, as they are optional for logging
-            if (logWeightInput.value.trim() !== '') isValid = validateField(logWeightInput, 'Weight', {isOptional: true, allowZero: true, allowNegative: false}) && isValid;
-            if (logProteinInput.value.trim() !== '') isValid = validateField(logProteinInput, 'Protein', {isOptional: true, allowZero: true, allowNegative: false}) && isValid;
-            if (logCarbsInput.value.trim() !== '') isValid = validateField(logCarbsInput, 'Carbs', {isOptional: true, allowZero: true, allowNegative: false}) && isValid;
-            if (logFatInput.value.trim() !== '') isValid = validateField(logFatInput, 'Fat', {isOptional: true, allowZero: true, allowNegative: false}) && isValid;
-            
-            if (!date) {
-                isValid = false;
-                logOverallError.textContent = 'Date is required to log data.';
-            }
-            if (!isValid && !logOverallError.textContent) { // If specific field errors handled by validateField, show generic
-                logOverallError.textContent = 'Please correct any errors in the fields above.';
-            }
+            if (logWeightInput.value.trim()) isValid=validateField(logWeightInput,'Weight',{isOptional:true,allowZero:true})&&isValid;
+            if (logProteinInput.value.trim()) isValid=validateField(logProteinInput,'Protein',{isOptional:true,allowZero:true})&&isValid;
+            if (logCarbsInput.value.trim()) isValid=validateField(logCarbsInput,'Carbs',{isOptional:true,allowZero:true})&&isValid;
+            if (logFatInput.value.trim()) isValid=validateField(logFatInput,'Fat',{isOptional:true,allowZero:true})&&isValid;
+            if (!date) { isValid = false; logOverallError.textContent = 'Date required.'; }
+            if (!isValid && !logOverallError.textContent) logOverallError.textContent = 'Correct errors.';
             if (!isValid) return;
-
-            const weightVal = logWeightInput.value.trim() !== '' ? parseFloat(logWeightInput.value) : null;
-            const proteinVal = logProteinInput.value.trim() !== '' ? parseFloat(logProteinInput.value) : 0;
-            const carbsVal = logCarbsInput.value.trim() !== '' ? parseFloat(logCarbsInput.value) : 0;
-            const fatVal = logFatInput.value.trim() !== '' ? parseFloat(logFatInput.value) : 0;
-            let calories = null;
-            if (logProteinInput.value.trim() || logCarbsInput.value.trim() || logFatInput.value.trim()) {
-                 calories = (proteinVal * CALORIES_PER_G_PROTEIN) + (carbsVal * CALORIES_PER_G_CARB) + (fatVal * CALORIES_PER_G_FAT);
+            const w = logWeightInput.value.trim() ? parseFloat(logWeightInput.value) : null;
+            const p = logProteinInput.value.trim() ? parseFloat(logProteinInput.value) : 0;
+            const c = logCarbsInput.value.trim() ? parseFloat(logCarbsInput.value) : 0;
+            const f = logFatInput.value.trim() ? parseFloat(logFatInput.value) : 0;
+            let cal = null;
+            if (logProteinInput.value.trim()||logCarbsInput.value.trim()||logFatInput.value.trim()) {
+                 cal=(p*CALORIES_PER_G_PROTEIN)+(c*CALORIES_PER_G_CARB)+(f*CALORIES_PER_G_FAT);
             }
-
-            const logEntry = {
-                date: date, weight: weightVal,
-                protein: logProteinInput.value.trim() !== '' ? proteinVal : null,
-                carbs: logCarbsInput.value.trim() !== '' ? carbsVal : null,
-                fat: logFatInput.value.trim() !== '' ? fatVal : null,
-                calories: calories !== null ? Math.round(calories) : null
-            };
-            dailyLogs = dailyLogs.filter(log => log.date !== date);
-            dailyLogs.push(logEntry);
-            dailyLogs.sort((a, b) => new Date(a.date) - new Date(b.date));
-            saveData();
-            updateDashboardUI();
-            logSuccess.textContent = `Data logged/updated for ${formatDate(date)}!`;
+            const entry = { date:date, weight:w, protein:logProteinInput.value.trim()?p:null, carbs:logCarbsInput.value.trim()?c:null, fat:logFatInput.value.trim()?f:null, calories:cal!==null?Math.round(cal):null };
+            dailyLogs = dailyLogs.filter(l => l.date !== date); dailyLogs.push(entry);
+            dailyLogs.sort((a,b) => new Date(a.date) - new Date(b.date));
+            saveData(); updateDashboardUI(); logSuccess.textContent = `Data for ${formatDateForDisplay(date)} logged!`;
         });
-
-        clearLogDayBtn.addEventListener('click', () => {
-            const dateToClear = logDateInput.value;
-            if (!dateToClear) {
-                logOverallError.textContent = "Please select a date to clear.";
-                return;
-            }
-            if (confirm(`Are you sure you want to clear all logged data for ${formatDate(dateToClear)}?`)) {
-                dailyLogs = dailyLogs.filter(log => log.date !== dateToClear);
-                saveData();
-                prefillLogData(dateToClear); // This will now show empty fields
-                updateDashboardUI();
-                logSuccess.textContent = `Log for ${formatDate(dateToClear)} cleared.`;
-                logOverallError.textContent = '';
+        clearLogDayBtn.addEventListener('click', () => { /* ... (same as before) ... */ 
+            const date = logDateInput.value; if (!date) { logOverallError.textContent = "Select date."; return; }
+            if (confirm(`Clear log for ${formatDateForDisplay(date)}?`)) {
+                dailyLogs = dailyLogs.filter(l => l.date !== date); saveData();
+                prefillLogData(date); updateDashboardUI();
+                logSuccess.textContent = `Log for ${formatDateForDisplay(date)} cleared.`; logOverallError.textContent = '';
             }
         });
+        toggleDataSummaryBtn.addEventListener('click', () => { /* ... (same as before) ... */ 
+            const isHidden = dataSummaryContainer.style.display === 'none';
+            if (isHidden) {
+                displayStoredDataSummary(); 
+                dataSummaryContainer.style.display = 'block';
+                toggleDataSummaryBtn.textContent = 'Hide My Data Summary';
+            } else {
+                dataSummaryContainer.style.display = 'none';
+                toggleDataSummaryBtn.textContent = 'View My Data Summary';
+            }
+        });
+        // NEW: Event handler for toggling weight chart
+        toggleWeightChartBtn.addEventListener('click', () => {
+            const isHidden = weightChartContainer.style.display === 'none';
+            if (isHidden) {
+                const chartData = calculateWeeklyAverageWeights();
+                renderWeightChart(chartData);
+                weightChartContainer.style.display = 'block';
+                toggleWeightChartBtn.textContent = 'Hide Weight Trend Chart';
+            } else {
+                weightChartContainer.style.display = 'none';
+                toggleWeightChartBtn.textContent = 'View Weight Trend Chart';
+                if (weightChartInstance) { // Optionally destroy chart when hidden to free resources
+                    // weightChartInstance.destroy(); 
+                    // weightChartInstance = null;
+                }
+            }
+        });
 
-
-        checkinBtn.addEventListener('click', async () => { // Make async for potential timeout
-            checkinBtn.disabled = true;
-            checkinBtn.textContent = 'Calculating...';
-            checkinMessage.textContent = 'Performing check-in, please wait...';
-            
-            // Allow UI to update before heavy calculation
+        checkinBtn.addEventListener('click', async () => { /* ... (same as before) ... */ 
+            checkinBtn.disabled = true; checkinBtn.textContent = 'Calculating...';
+            checkinMessage.textContent = 'Performing check-in...';
             await new Promise(resolve => setTimeout(resolve, 50)); 
-
-            const analysisWindowStartDate = NdayAgoDateString(CHECKIN_ANALYSIS_DAYS_WINDOW - 1);
-            const logsForAnalysis = dailyLogs
-                .filter(log => 
-                    log.date >= analysisWindowStartDate &&
-                    log.weight !== null && typeof log.weight === 'number' && log.weight > 0 &&
-                    log.calories !== null && typeof log.calories === 'number' && log.calories > 0
-                )
-                .sort((a,b) => new Date(a.date) - new Date(b.date)); 
-
-            if (logsForAnalysis.length < MIN_LOGS_FOR_CHECKIN) {
-                checkinMessage.textContent = `Not enough full log days in the last ${CHECKIN_ANALYSIS_DAYS_WINDOW} days. Need ${MIN_LOGS_FOR_CHECKIN}, found ${logsForAnalysis.length}. Please log more data.`;
-                checkinBtn.disabled = false; 
-                checkinBtn.textContent = 'Perform Weekly Check-in';
-                return;
+            const start = NdayAgoDateString(CHECKIN_ANALYSIS_DAYS_WINDOW-1);
+            const logs = dailyLogs.filter(l=>l.date>=start && l.weight>0 && l.calories>0).sort((a,b)=>new Date(a.date)-new Date(b.date));
+            if (logs.length < MIN_LOGS_FOR_CHECKIN) {
+                checkinMessage.textContent = `Need ${MIN_LOGS_FOR_CHECKIN} full log days, found ${logs.length}.`;
+                checkinBtn.disabled = false; checkinBtn.textContent = 'Perform Check-in'; return;
             }
-
-            const startTrendLogs = logsForAnalysis.slice(0, Math.min(WEIGHT_TREND_DAYS, logsForAnalysis.length));
-            const endTrendLogs = logsForAnalysis.slice(-Math.min(WEIGHT_TREND_DAYS, logsForAnalysis.length));
-
-            const startTrendWeight = getAverageWeight(startTrendLogs);
-            const endTrendWeight = getAverageWeight(endTrendLogs);
-
-            if (startTrendWeight === null || endTrendWeight === null || startTrendLogs.length === 0 || endTrendLogs.length === 0) {
-                checkinMessage.textContent = 'Could not determine weight trend. Ensure sufficient weight logs at start/end of analysis period.';
-                checkinBtn.disabled = false; checkinBtn.textContent = 'Perform Weekly Check-in'; return;
+            const trendStart = logs.slice(0,Math.min(WEIGHT_TREND_DAYS,logs.length));
+            const trendEnd = logs.slice(-Math.min(WEIGHT_TREND_DAYS,logs.length));
+            const wStart = getAverageWeight(trendStart), wEnd = getAverageWeight(trendEnd);
+            if (wStart===null || wEnd===null || trendStart.length===0 || trendEnd.length===0) {
+                checkinMessage.textContent = 'Cannot determine weight trend.';
+                checkinBtn.disabled=false; checkinBtn.textContent='Perform Check-in'; return;
             }
-
-            const weightChangeKg = endTrendWeight - startTrendWeight;
-            const firstTrendDay = new Date(startTrendLogs[0].date);
-            const lastTrendDay = new Date(endTrendLogs[endTrendLogs.length-1].date);
-            const daysInTrendPeriod = Math.max(1, (lastTrendDay - firstTrendDay) / (1000 * 60 * 60 * 24)); 
-
-            if (daysInTrendPeriod < Math.max(1, WEIGHT_TREND_DAYS -1) && logsForAnalysis.length < (MIN_LOGS_FOR_CHECKIN + WEIGHT_TREND_DAYS -1) ) { 
-                 checkinMessage.textContent = `Trend period too short (${daysInTrendPeriod.toFixed(0)} days) for reliable weight trend. Log more consistently.`;
-                 checkinBtn.disabled = false; checkinBtn.textContent = 'Perform Weekly Check-in'; return;
+            const wChange = wEnd - wStart;
+            const dFirstTrend = new Date(trendStart[0].date), dLastTrend = new Date(trendEnd[trendEnd.length-1].date);
+            const dTrendPeriod = Math.max(1,(dLastTrend-dFirstTrend)/(1000*60*60*24));
+            if(dTrendPeriod < Math.max(1,WEIGHT_TREND_DAYS-1) && logs.length < (MIN_LOGS_FOR_CHECKIN+WEIGHT_TREND_DAYS-1)) {
+                checkinMessage.textContent = `Trend period too short (${dTrendPeriod.toFixed(0)} days).`;
+                checkinBtn.disabled=false; checkinBtn.textContent='Perform Check-in'; return;
             }
-
-            const averageDailyCaloriesInPeriod = logsForAnalysis.reduce((sum, log) => sum + log.calories, 0) / logsForAnalysis.length;
-            const firstDateOfAnalysis = new Date(logsForAnalysis[0].date);
-            const lastDateOfAnalysis = new Date(logsForAnalysis[logsForAnalysis.length - 1].date);
-            const durationOfAnalysisPeriodDays = Math.max(1, (lastDateOfAnalysis - firstDateOfAnalysis) / (1000 * 60 * 60 * 24)); 
-            const dailyCalorieSurplusOrDeficit = (weightChangeKg * CALORIES_PER_KG_FAT_TISSUE) / durationOfAnalysisPeriodDays;
-            const calculatedExpenditure = averageDailyCaloriesInPeriod - dailyCalorieSurplusOrDeficit;
-
-            if (isNaN(calculatedExpenditure) || !isFinite(calculatedExpenditure)) {
-                checkinMessage.textContent = 'Error calculating expenditure. Check logs for anomalies.';
-                checkinBtn.disabled = false; checkinBtn.textContent = 'Perform Weekly Check-in'; return;
+            const avgCal = logs.reduce((s,l)=>s+l.calories,0)/logs.length;
+            const dFirstAnalysis=new Date(logs[0].date), dLastAnalysis=new Date(logs[logs.length-1].date);
+            const durAnalysis=Math.max(1,(dLastAnalysis-dFirstAnalysis)/(1000*60*60*24));
+            const dailySurDef=(wChange*CALORIES_PER_KG_FAT_TISSUE)/durAnalysis;
+            const exp=avgCal-dailySurDef;
+            if(isNaN(exp)||!isFinite(exp)){
+                checkinMessage.textContent='Error calculating expenditure.';
+                checkinBtn.disabled=false; checkinBtn.textContent='Perform Check-in'; return;
             }
-            
-            const previousTDEE = currentTargets.estimatedTDEE || calculateInitialTDEE(userProfile); 
-            const newSmoothedTDEE = (previousTDEE * (1 - TDEE_SMOOTHING_FACTOR)) + (calculatedExpenditure * TDEE_SMOOTHING_FACTOR);
-            const latestWeightForMacros = endTrendWeight; 
-            currentTargets = calculateTargets(newSmoothedTDEE, userProfile, latestWeightForMacros);
-            
-            saveData();
-            updateDashboardUI(); // This will also re-enable the button if conditions met
-            checkinBtn.textContent = 'Perform Weekly Check-in'; // Reset button text
-            // Note: updateDashboardUI will handle disabling if still < MIN_LOGS
-
-            checkinMessage.innerHTML = `Check-in complete! <br>
-                                       Trend Weight Change: ${weightChangeKg.toFixed(2)} kg over approx. ${durationOfAnalysisPeriodDays.toFixed(0)} days.<br>
-                                       Avg Calories Logged: ${averageDailyCaloriesInPeriod.toFixed(0)} kcal/day.<br>
-                                       Implied Expenditure: ${calculatedExpenditure.toFixed(0)} kcal/day.<br>
-                                       New Smoothed TDEE: ${currentTargets.estimatedTDEE} kcal. Targets adjusted.`;
+            const prevTDEE=currentTargets.estimatedTDEE||calculateInitialTDEE(userProfile);
+            const newTDEE=(prevTDEE*(1-TDEE_SMOOTHING_FACTOR))+(exp*TDEE_SMOOTHING_FACTOR);
+            currentTargets=calculateTargets(newTDEE,userProfile,wEnd);
+            saveData(); updateDashboardUI(); checkinBtn.textContent='Perform Check-in';
+            checkinMessage.innerHTML = `Check-in complete! <br>Weight Change: ${wChange.toFixed(2)}kg. Avg Cal: ${avgCal.toFixed(0)}. Est. Exp: ${exp.toFixed(0)}.<br>New TDEE: ${currentTargets.estimatedTDEE}kcal. Targets updated.`;
         });
-
-        resetDataBtn.addEventListener('click', () => {
-            if (confirm("Are you sure you want to reset all data? This cannot be undone.")) {
-                localStorage.clear(); // Simpler way to clear all app-specific data if keys are prefixed or only app data is stored
-                userProfile = null; dailyLogs = []; currentTargets = {};
-                [setupOverallError, logOverallError, logSuccess, checkinMessage].forEach(el => el.textContent = '');
-                logDateInput.value = ''; 
-                init(); 
+        resetDataBtn.addEventListener('click', () => { /* ... (same as before) ... */ 
+            if (confirm("Reset all data?")) {
+                localStorage.clear(); userProfile=null; dailyLogs=[]; currentTargets={};
+                [setupOverallError,logOverallError,logSuccess,checkinMessage].forEach(el=>el.textContent='');
+                logDateInput.value=''; init(); 
             }
         });
-
-        viewLogsBtn.addEventListener('click', () => {
-            console.log("User Profile:", userProfile);
-            console.log("Daily Logs:", dailyLogs);
-            console.log("Current Targets:", currentTargets);
-            alert("Logs printed to browser console (F12 or Right-click -> Inspect -> Console).");
+        viewLogsBtn.addEventListener('click', () => { /* ... (same as before) ... */ 
+            console.log("Profile:",userProfile,"Logs:",dailyLogs,"Targets:",currentTargets);
+            alert("Raw data printed to browser console (F12).");
         });
 
         // --- Initialization ---
-        function init() {
-            loadData(); 
-            setupInputValidationListeners(); // Setup real-time validation
+        function init() { /* ... (same as before) ... */ 
+            loadData(); setupInputValidationListeners(); 
             if (userProfile) { 
-                showScreen('dashboardScreen');
-                updateDashboardUI();
+                showScreen('dashboardScreen'); updateDashboardUI();
                 if (!logDateInput.value) logDateInput.value = getTodayDateString();
                 logDateInput.dispatchEvent(new Event('change')); 
-            } else { 
-                showScreen('setupScreen');
-            }
+            } else { showScreen('setupScreen'); }
         }
         init();
     </script>
 </body>
 </html>
+
